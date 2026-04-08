@@ -57,6 +57,11 @@ function createTranslationMatrix2DAssignment({
             { value: 0, editable: false },
             { value: 1, editable: false },
           ],
+          [
+            {value: 1, editable: false},
+            {value: 0, editable: false},
+            {value: '', editable: true },
+          ],
         ],
       });
     },
