@@ -10,20 +10,18 @@ import OrderMatrixMultiplication from "./order-matrix-multiplication";
 import FillInTheBlankWithOptions from "./fill-in-the-blank-with-options";
 import { Button } from "./ui/button";
 import { useFillInTheBlankStore } from "@/store/fillInTheBlankStore";
-import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
+import { SkipForward } from "lucide-react";
 
 interface Props {
   assignment: Assignment | null;
   handleConfirm: () => void;
-  handlePrevious?: () => void;
-  handleNext?: () => void;
+  handleSkip: () => void;
 }
 
-export default function AssignmentNotAnswered({
+export default function AssignmentNotAnsweredRandom({
   assignment,
   handleConfirm,
-  handlePrevious,
-  handleNext,
+  handleSkip,
 }: Props) {
   const { inputs } = useFillInTheBlankStore();
   const { matrices } = useFillBlankMatrixInputStore();
@@ -65,21 +63,13 @@ export default function AssignmentNotAnswered({
 
       <OrderMatrixMultiplication />
 
-      {/*Div com os botões de confirmar respostas, ir para a questão anterior e próxima questão*/}
+      {/*Div com os botões de confirmar resposta e pular questão*/}
       <div className="flex items-center justify-center gap-4 mt-4">
-        {handlePrevious && (
-          <button onClick={handlePrevious}>
-            <ChevronLeftCircle />
-          </button>
-        )}
-
         <Button onClick={handleConfirm}>Confirmar</Button>
 
-        {handleNext && (
-          <button onClick={handleNext}>
-            <ChevronRightCircle />
-          </button>
-        )}
+        <Button variant="outline" onClick={handleSkip}>
+          Pular questão <SkipForward />
+        </Button>
       </div>
     </>
   );

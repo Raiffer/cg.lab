@@ -113,6 +113,22 @@ export default function SpecificAssignmentPage({
     }
   }, [assignment, subject, subjectData, resetAttemptCount]);
 
+  const handlePrevious = useCallback(() => {
+    if (!assignment || !subjectData) return;
+
+    const currentIndex = subjectData.assignments.findIndex(
+      a => a.id === assignment.id
+    );
+    const previousAssignment = subjectData.assignments[currentIndex - 1];
+
+    if (previousAssignment) {
+      resetAttemptCount();
+      redirect(`/assignment/${subject}/${previousAssignment.id}`);
+    } else {
+      redirect(`/subject/${subject}`);
+    }
+  }, [assignment, subject, subjectData, resetAttemptCount]);
+
   // Keyboard shortcuts
   useAssignmentKeyboardShortcuts(
     assignmentState,
@@ -147,6 +163,8 @@ export default function SpecificAssignmentPage({
             <AssignmentNotAnswered
               assignment={assignment}
               handleConfirm={handleConfirm}
+              handlePrevious={handlePrevious}
+              handleNext={handleNext}
             />
           ) : (
             <AssignmentResult

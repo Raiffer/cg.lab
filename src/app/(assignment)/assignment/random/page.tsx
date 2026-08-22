@@ -9,8 +9,8 @@ import GenericScene2D from "@/components/generic-scene-2d";
 import GenericScene3D from "@/components/generic-scene-3d";
 import ObjectivePanel2D from "@/components/objective-panel-2d";
 import ObjectivePanel3D from "@/components/objective-panel-3d";
-import AssignmentResult from "@/components/assignment-result";
-import AssignmentNotAnswered from "@/components/assignment-not-answered";
+import AssignmentResultRandom from "@/components/assignment-result-random";
+import AssignmentNotAnsweredRandom from "@/components/assignment-not-answered-random";
 
 // Hooks
 import { useAssignment } from "@/hooks/use-assignment";
@@ -104,7 +104,7 @@ export default function RandomAssignmentPage() {
     incrementAttemptCount,
   ]);
 
-  const handleNext = useCallback(() => {
+  const handleSkip = useCallback(() => {
     setAssignmentState("notAnswered");
 
     try {
@@ -148,7 +148,7 @@ export default function RandomAssignmentPage() {
     assignmentState,
     onConfirmAnswer,
     handleTryAgain,
-    handleNext
+    handleSkip
   );
 
   // Early return if no assignment
@@ -172,17 +172,17 @@ export default function RandomAssignmentPage() {
       {/* Assignment interface */}
       <div className="absolute bottom-4 bg-gray-200 p-4 rounded-md left-2 w-3/4 md:w-[40%] border-b-4 border-b-gray-400">
         <div className="text-center">
-          <AssignmentResult
+          <AssignmentResultRandom
             state={assignmentState}
             onTryAgain={handleTryAgain}
-            onNext={handleNext}
-            isLastAssignment={false}
+            onSkip={handleSkip}
           />
 
           {assignmentState === "notAnswered" && (
-            <AssignmentNotAnswered
+            <AssignmentNotAnsweredRandom
               assignment={assignment}
               handleConfirm={onConfirmAnswer}
+              handleSkip={handleSkip}
             />
           )}
         </div>
