@@ -17,6 +17,7 @@ import ObjectivePanel2D from "@/components/objective-panel-2d";
 import ObjectivePanel3D from "@/components/objective-panel-3d";
 import AssignmentNotAnswered from "@/components/assignment-not-answered";
 import AssignmentResult from "@/components/assignment-result";
+import SidePanel from "@/components/side-panel";
 
 // Hooks
 import { useAssignment } from "@/hooks/use-assignment";
@@ -154,6 +155,9 @@ export default function SpecificAssignmentPage({
           <ObjectivePanel3D />
         </>
       )}
+
+      {/* Side panel container */}
+      <SidePanel subject={subject} currentAssignmentId={assignment.id} />
 
       {/* Assignment interface container */}
       <div className="absolute bottom-4 bg-gray-200 p-4 rounded-md left-2 w-3/4 md:w-[40%] border-b-4 border-b-gray-400">

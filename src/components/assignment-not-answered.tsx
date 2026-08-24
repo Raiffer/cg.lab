@@ -17,6 +17,7 @@ interface Props {
   handleConfirm: () => void;
   handlePrevious?: () => void;
   handleNext?: () => void;
+  questionNumber?: number;
 }
 
 export default function AssignmentNotAnswered({
@@ -24,6 +25,7 @@ export default function AssignmentNotAnswered({
   handleConfirm,
   handlePrevious,
   handleNext,
+  questionNumber,
 }: Props) {
   const { inputs } = useFillInTheBlankStore();
   const { matrices } = useFillBlankMatrixInputStore();
@@ -31,6 +33,11 @@ export default function AssignmentNotAnswered({
 
   return (
     <>
+      {questionNumber !== undefined && (
+        <p className="text-sm font-semibold text-gray-500 mb-1">
+          Questão {questionNumber}
+        </p>
+      )}
       <p className="text-base md:text-xl">{assignment?.instructions}</p>
 
       {assignment?.type === AssignmentType.FILL_IN_THE_BLANK_COORDINATES &&
