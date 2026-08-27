@@ -7,6 +7,7 @@ const schema = defineSchema({
   users: defineTable({
     name: v.string(),
     email: v.string(),
+    matricula: v.optional(v.string()),
     isAnonymous: v.optional(v.boolean()),
     streak: v.optional(v.number()),
     bestStreak: v.optional(v.number()),
@@ -14,7 +15,9 @@ const schema = defineSchema({
     practicedWeekDays: v.optional(v.array(v.string())),
     currentDailyMissionId: v.optional(v.string()),
     currentDailyMissionProgress: v.optional(v.number()),
-  }).index("email", ["email"]),
+  })
+    .index("email", ["email"])
+    .index("matricula", ["matricula"]),
   assignmentCompletions: defineTable({
     userId: v.string(),
     assignmentId: v.string(),

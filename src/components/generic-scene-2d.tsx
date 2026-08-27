@@ -39,7 +39,7 @@ export default function GenericScene2D({ config }: { config: Scene2DConfig }) {
       ))}
 
       {config.vectors?.map(vector => (
-        <VectorWithControls key={vector.label} vector={vector} />
+        <VectorWithControls key={vector.id} vector={vector} />
       ))}
 
       {config.points?.map(point => {

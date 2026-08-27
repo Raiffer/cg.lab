@@ -12,10 +12,11 @@ import { translationMatrix2dAssignmentList } from "./translationMatrix";
 
 export const matricesAssignments = [
   // Translation Matrix Assignments
-  ...translationMatrix2dAssignmentList,
   ...applyTranslationmatrixToPointAssignmentList,
-  ...fillInTranslationMatrixAssignmentList,
+  ...translationMatrix2dAssignmentList,
   ...applyTranslationMatrixToPolygonAssignmentList,
+  ...fillInTranslationMatrixAssignmentList,
+  
 
   // Scale Matrix Assignments
   ...scalePointAssignmentList,

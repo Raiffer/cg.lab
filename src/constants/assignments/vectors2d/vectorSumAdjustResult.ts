@@ -115,19 +115,6 @@ const adjustVectorSumResultProps: VectorSumAjustResultProps[] = [
 
   // Level 2: Negative components
   {
-    order: 3,
-    title: "Soma com Componentes Negativas",
-    instructions: "Ajuste c para mostrar a soma incluindo direções opostas",
-    vectorA: {
-      tail: [0, 0],
-      tip: [2, 1],
-    },
-    vectorB: {
-      tail: [0, 0],
-      tip: [-1, 2],
-    },
-  },
-  {
     order: 4,
     title: "Soma Completa",
     instructions: "Ajuste o vetor c para representar a soma de a e b",
