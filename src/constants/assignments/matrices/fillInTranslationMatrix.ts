@@ -43,6 +43,7 @@ function createFillInTranslationMatrixAssignment({
   ]);
 
   return {
+    assisted: false,
     id: `fill-in-translation-matrix-${order}`,
     title: title || "Matriz de Translação",
     instructions:

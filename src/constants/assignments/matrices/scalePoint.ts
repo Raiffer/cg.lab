@@ -26,6 +26,7 @@ function createScalePointAssignment({
   ];
 
   return {
+    assisted: false,
     id: `scale-point-${order}`,
     title: title || "Matriz de Escala em Ponto",
     instructions:

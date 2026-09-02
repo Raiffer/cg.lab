@@ -20,6 +20,7 @@ function createVectorLengthInteractiveAssignment({
   dimentions,
 }: VectorLengthInteractiveAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `vector-length-interactive-${order}`,
     title: "Ajuste o vetor",
     instructions:

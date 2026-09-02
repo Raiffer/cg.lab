@@ -17,6 +17,7 @@ function createMovePointAssignment({
   goalPointPosition,
 }: MovePointAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `move-point-${order}`,
     order,
     title,

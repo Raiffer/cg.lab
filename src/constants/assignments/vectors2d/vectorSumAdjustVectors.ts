@@ -30,6 +30,7 @@ function createAdjustVectorSumAssignment({
     : `Ajuste os vetores a e b para que a soma deles seja (${vectorC[0]}, ${vectorC[1]})`;
 
   return {
+    assisted: false,
     id: `adjust-vector-sum-${order}`,
     title,
     instructions: formattedInstructions,

@@ -26,6 +26,7 @@ function createVectorSumAdjustResultAssignment({
   const randomCVec = getRandomVectorWithTailAndTip([-4, 4]);
 
   return {
+    assisted: false,
     id: `adjust-vector-to-sum-${order}`,
     title,
     instructions,

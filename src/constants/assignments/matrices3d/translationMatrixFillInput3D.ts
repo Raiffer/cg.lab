@@ -23,6 +23,7 @@ function createTranslationMatrixFillInput3D({
   targetTranslation,
 }: TranslationMatrixFillInput3DProps): Assignment {
   return {
+    assisted: false,
     id: `translation-matrix-fill-input-${order}`,
     title: title || "Matriz de Translação 3D",
     instructions:

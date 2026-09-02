@@ -33,6 +33,7 @@ function createScalePolygonAssignment({
   const targetSquare = applyTransformationsToPolygon(square, [scaleMatrix]);
 
   return {
+    assisted: false,
     id: `scale-polygon-${order}`,
     title: title || "Matriz de Escala",
     instructions:

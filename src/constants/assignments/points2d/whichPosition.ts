@@ -16,6 +16,7 @@ function createWhichPositionCoordsInputsAssignment({
   pointPosition,
 }: WhichPositionCoordsInputAssignment): Assignment {
   return {
+    assisted: false,
     id: `which-position-${order}`,
     order,
     title,

@@ -19,6 +19,7 @@ function createVectorScalarInteractiveAssignment({
   scalar,
 }: VectorScaleInteractiveAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `vector-scalar-${order}`,
     title: title || "Multiplicação de vetor por escalar",
     instructions:

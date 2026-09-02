@@ -23,6 +23,7 @@ function createVectorSumInsertResultAssignment({
   vectorBTip,
 }: VectorSumInsertResultProps): Assignment {
   return {
+    assisted: false,
     id: `insert-vector-sum-${order}`,
     title,
     instructions,

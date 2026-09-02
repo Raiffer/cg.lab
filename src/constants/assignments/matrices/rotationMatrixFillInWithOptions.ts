@@ -82,6 +82,7 @@ function createRotationMatrixFillInWithOptionsAssignment({
   const square = createSquare("square", "blue", center, size);
 
   return {
+    assisted: false,
     id: `rotation-matrix-fill-in-with-options-${order}`,
     title: `Matriz de rotação`,
     instructions: `Complete a matriz de rotação para que atinja o objetivo.`,

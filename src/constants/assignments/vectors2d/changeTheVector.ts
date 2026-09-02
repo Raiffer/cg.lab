@@ -20,6 +20,7 @@ function createChangeTheVectorAssignment({
   goalVector,
 }: ChangeTheVectorAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `change-the-vector-${order}`,
     order,
     title,

@@ -69,6 +69,7 @@ function createMatrixAssignment({
   validate: () => boolean;
 }) {
   return {
+    assisted: false,
     id: "matrix-assignment",
     dimensions: "2D" as "2D" | "3D",
     order: Math.floor(Math.random() * 100),

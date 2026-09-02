@@ -78,6 +78,7 @@ function createRotationMatrixFillWithOptions3D({
   );
 
   return {
+    assisted: false,
     id: `rotation-matrix-fill-with-options-${order}`,
     title: title || "Matriz de Rotação 3D",
     instructions:

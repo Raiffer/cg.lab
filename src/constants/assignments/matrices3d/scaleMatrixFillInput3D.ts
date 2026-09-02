@@ -23,6 +23,7 @@ function createScaleMatrixFillInput3D({
   targetScale,
 }: ScaleMatrixFillInput3DProps): Assignment {
   return {
+    assisted: false,
     id: `scale-matrix-fill-input-${order}`,
     title: title || "Matriz de Escala 3D",
     instructions:

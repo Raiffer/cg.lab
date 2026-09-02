@@ -17,6 +17,7 @@ function createTranslationMatrix2DAssignment({
   goalPosition,
 }: TranslationMatrix2DAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `translation-matrix-2d-${order}`,
     title: "Matriz de Translação",
     instructions: `Altere a matriz de translação para mover o ponto A para a posição (${goalPosition[0]}, ${goalPosition[1]}).`,

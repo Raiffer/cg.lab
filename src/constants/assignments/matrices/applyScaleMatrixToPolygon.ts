@@ -37,6 +37,7 @@ function createApplyScaleMatrixToPolygon({
     );
 
   return {
+    assisted: false,
     id: `apply-scale-matrix-to-polygon-${order}`,
     order,
     title: "Aplique a matriz de escala ao polígono",

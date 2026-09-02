@@ -65,6 +65,7 @@ function createTranslationMatrixToPolygonAssignment({
   }
 
   return {
+    assisted: false,
     id: `apply-translation-matrix-to-polygon-2d-${order}`,
     title: title || "Aplique a Matriz de Translação a um Polígono",
     instructions: instructions || `Aplique a matriz de translação ao polígono.`,
@@ -74,6 +75,20 @@ function createTranslationMatrixToPolygonAssignment({
     setup: () => {
       const { addPolygon } = useScene2DStore.getState();
       if (initialPolygon) {
+        addPolygon({
+          ...initialPolygon,
+          id: "initial-polygon",
+          color: "gray",
+          opacity: 0.35,
+          strokeStyle: "dashed",
+          movable: false,
+          points: initialPolygon.points.map(point => ({
+            ...point,
+            id: `${point.id}-initial`,
+            color: "gray",
+            movable: false,
+          })),
+        });
         addPolygon(initialPolygon);
       }
 

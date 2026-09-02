@@ -65,6 +65,7 @@ function createRotationMatrixFillInput3D({
   );
 
   return {
+    assisted: false,
     id: `rotation-matrix-fill-input-${order}`,
     title: title || "Matriz de Rotação 3D",
     instructions:

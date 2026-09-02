@@ -15,6 +15,7 @@ import {
   BadgeCheck,
   BringToFront,
   Grab,
+  ArrowLeft,
   LayoutGrid,
   MousePointerSquareDashedIcon,
   Puzzle,
@@ -66,24 +67,40 @@ export default function SubjectPage({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 md:gap-16">
-      <Card className="mb-4 md:mb-0 self-start md:sticky top-4 lg:col-span-1">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold">{subject?.title}</CardTitle>
-          <CardDescription>{subject?.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>
-            {assignmentsCompletions?.length ?? "?"}/
-            {subject?.assignments.length} exercícios
-          </p>
-        </CardContent>
-      </Card>
+      <div className="mb-4 md:mb-0 self-start md:sticky top-4 lg:col-span-1">
+        <Link href="/">
+          <Button
+            variant="outline"
+            className="mb-4 w-full justify-start gap-2 border-black bg-black text-white hover:bg-gray-800 hover:text-white"
+          >
+            <ArrowLeft size={16} />
+            Voltar
+          </Button>
+        </Link>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold">
+              {subject?.title}
+            </CardTitle>
+            <CardDescription>{subject?.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>
+              {assignmentsCompletions?.length ?? "?"}/
+              {subject?.assignments.length} exercícios
+            </p>
+          </CardContent>
+        </Card>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 col-span-2 gap-4">
-        {subject?.assignments.map(assignment => (
+        {subject?.assignments.map((assignment, index) => (
           <Card key={assignment.id} className="flex flex-col justify-between">
             <CardHeader>
               <CardTitle>
-                <div className="flex items-center mb-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex min-h-6 min-w-8 items-center justify-center rounded-full bg-black px-2 py-1 text-xs font-bold text-white">
+                    {index + 1}
+                  </div>
                   <div className="flex items-center gap-1 p-1 bg-blue-200 border border-blue-300 rounded-md shadow-sm">
                     <p className="text-xs">
                       {

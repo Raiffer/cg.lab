@@ -15,6 +15,7 @@ function createAlignPointsInAxisAssignment({
   axisToAlign,
 }: AlignPointsInAxisAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `align-points-axis-${order}`,
     order,
     title,

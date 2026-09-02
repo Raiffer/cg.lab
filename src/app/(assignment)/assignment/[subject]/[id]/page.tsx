@@ -8,6 +8,7 @@ import React, {
   useCallback,
   useMemo,
   use,
+  useState,
 } from "react";
 
 // Components
@@ -18,6 +19,7 @@ import ObjectivePanel3D from "@/components/objective-panel-3d";
 import AssignmentNotAnswered from "@/components/assignment-not-answered";
 import AssignmentResult from "@/components/assignment-result";
 import SidePanel from "@/components/side-panel";
+import { Button } from "@/components/ui/button";
 
 // Hooks
 import { useAssignment } from "@/hooks/use-assignment";
@@ -38,6 +40,7 @@ export default function SpecificAssignmentPage({
   // State initialization
   const { subject, id } = use(params);
   const { config } = useScene2DStore();
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
   const {
     assignment,
     setAssignment,
@@ -143,6 +146,25 @@ export default function SpecificAssignmentPage({
 
   return (
     <>
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+        {isInfoVisible && (
+          <div
+            role="status"
+            className="w-64 rounded-md border bg-white p-4 text-sm shadow-lg"
+          />
+        )}
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full bg-white"
+          aria-label="Abrir informações da questão"
+          aria-expanded={isInfoVisible}
+          onClick={() => setIsInfoVisible(visible => !visible)}
+        >
+          <span className="text-lg font-bold">i</span>
+        </Button>
+      </div>
+
       {/* Render appropriate scene based on subject type */}
       {subjectData.type === "2D" ? (
         <>

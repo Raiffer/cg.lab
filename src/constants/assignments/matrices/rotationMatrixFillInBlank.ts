@@ -30,6 +30,7 @@ function createRotationmatrixFillInBlankAssignment({
   const square = createSquare("square", "blue", squareCenter, squareSize);
 
   return {
+    assisted: false,
     id: `rotation-matrix-${order}`,
     title: "Matriz de Rotação no eixo Z",
     instructions:
