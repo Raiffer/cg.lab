@@ -69,14 +69,15 @@ export default function FillInMatrixInput({ matrix }: Props) {
       }
     }
 
-    if (matrix.polygonRefId) {
-      const polygon = getPolygon(matrix.polygonRefId);
+    if (matrix.polygonRefId || matrix.polygonRefIds?.length) {
+      const polygonIds = matrix.polygonRefIds ?? [matrix.polygonRefId!];
+      const polygon = getPolygon(polygonIds[0]);
       if (polygon && matrix.type === MatrixType.SCALING) {
         const value00 = Number(matrix.matrixValue[0][0].value);
         const value11 = Number(matrix.matrixValue[1][1].value);
         const scale = [value00, value11] as [number, number];
         if (scale.some(isNaN)) return; // Do nothing if any value is NaN
-        setPolygonScale(matrix.polygonRefId, scale);
+        polygonIds.forEach(polygonId => setPolygonScale(polygonId, scale));
       }
 
       if (matrix.type === MatrixType.ROTATION_Z) {
@@ -108,7 +109,9 @@ export default function FillInMatrixInput({ matrix }: Props) {
           0,
           1
         );
-        setPolygonRotationMatrix(matrix.polygonRefId, customMatrix);
+        polygonIds.forEach(polygonId =>
+          setPolygonRotationMatrix(polygonId, customMatrix)
+        );
       }
 
       if (matrix.type === MatrixType.TRANSLATION) {
@@ -117,7 +120,9 @@ export default function FillInMatrixInput({ matrix }: Props) {
           Number(matrix.matrixValue[1][2].value),
         ] as [number, number];
         if (translation.some(isNaN)) return; // Do nothing if any value is NaN
-        setPolygonTranslation(matrix.polygonRefId, translation);
+        polygonIds.forEach(polygonId =>
+          setPolygonTranslation(polygonId, translation)
+        );
       }
     }
 

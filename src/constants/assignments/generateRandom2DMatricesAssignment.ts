@@ -27,7 +27,7 @@ import {
 import {
   generateOptions,
   mapPresetSelections,
-} from "./matrices/rotationMatrixFillInWithOptions";
+} from "./transformation/matrices/rotationMatrixFillInWithOptions";
 import { createSquare } from "@/utils/polygon";
 
 const COORDINATE_LIMITS = [-4, 4] as [number, number];
@@ -90,7 +90,7 @@ export function generate2DFillInTranslationMatrixAssignment(): RandomGeneratedAs
     title: "Matrix de translação 2D",
     instructions: `Complete a matriz de translação que desloque o ponto A(${pointA[0]}, ${pointA[1]}) para a posição (${targetPoint[0]}, ${targetPoint[1]})`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       setupScene([
         {
@@ -148,7 +148,7 @@ export function generate2DFillInTranslationMatrixForSquareAssignment(): RandomGe
     title: "Matrix de translação 2D",
     instructions: `Complete a matriz de Translação que desloque o quadrado Azul para o quadrado Verde`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       useScene2DStore.getState().reset();
       const { addPolygon, setObjectivePolygons } = useScene2DStore.getState();
@@ -233,7 +233,7 @@ export function generate2DTranslationMatrixAssignment(): RandomGeneratedAssignme
     title: "Matrix de translação 2D",
     instructions: `Mova o ponto A(${pointA[0]}, ${pointA[1]}) para a posição resultante da aplicação da matriz de translação`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       setupScene([
         {
@@ -284,7 +284,7 @@ export function generate2DScaleMatrixAssignment(): RandomGeneratedAssignment {
     title: "Matrix de escala 2D",
     instructions: `Mova os pontos do quadrado para a posição resultante da aplicação da matriz de escala`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "scaling-matrix",
+    subjectCategory: "scaling",
     setup: () => {
       useScene2DStore.getState().setPolygons([
         {
@@ -363,7 +363,7 @@ export function generate2DRotationMatrixAssignment(): RandomGeneratedAssignment 
   return createMatrixAssignment({
     title: "Matrix de rotação 2D",
     instructions: "Complete a matriz de rotação para que atinja o objetivo",
-    subjectCategory: "rotation-matrix",
+    subjectCategory: "rotation",
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS,
     setup() {
       const { addPolygon, setObjectivePolygons } = useScene2DStore.getState();
@@ -520,7 +520,7 @@ export function generate2DMatrixMultiplicationSortingAssignment(): RandomGenerat
     title: "Ordenação de multiplicação de matrizes 2D",
     instructions: `Ordene as matrizes de forma que a multiplicação resulte no objetivo esperado`,
     type: AssignmentType.ORDER_MATRIX_MULTIPLICATION,
-    subjectCategory: "matrix-multiplication",
+    subjectCategory: "multiplication",
     setup() {
       const { setPolygons, setObjectivePolygons } = useScene2DStore.getState();
       setPolygons([randomInitialPolygon]);

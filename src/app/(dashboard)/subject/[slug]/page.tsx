@@ -59,10 +59,10 @@ export default function SubjectPage({
     "vector-sum": "Soma de vetores",
     "vector-scalar": "Multiplicação por escalar",
     "vector-length": "Módulo de vetores",
-    "translation-matrix": "Matriz de translação",
-    "rotation-matrix": "Matriz de rotação",
-    "scaling-matrix": "Matriz de escala",
-    "matrix-multiplication": "Multiplicação de matrizes",
+    translation: "Translação",
+    rotation: "Rotação",
+    scaling: "Escala",
+    multiplication: "Multiplicação",
   };
 
   return (

@@ -30,7 +30,7 @@ function createTranslationMatrix2DAssignment({
     instructions,
     order,
     type: AssignmentType.INTERACTIVE,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       const { setPoints } = useScene2DStore.getState();
       setPoints([

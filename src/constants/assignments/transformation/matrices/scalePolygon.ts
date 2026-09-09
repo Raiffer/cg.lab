@@ -41,7 +41,7 @@ function createScalePolygonAssignment({
       "Altere a matriz de escala para que escale o quadrado para o objetivo",
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "scaling-matrix",
+    subjectCategory: "scaling",
     setup: () => {
       const { addPolygon, setObjectivePolygons } = useScene2DStore.getState();
       addPolygon(square);

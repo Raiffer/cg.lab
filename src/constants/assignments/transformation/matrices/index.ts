@@ -11,20 +11,19 @@ import { scalePolygonAssignmentList } from "./scalePolygon";
 import { translationMatrix2dAssignmentList } from "./translationMatrix";
 
 export const matricesAssignments = [
-  // Translation Matrix Assignments
+  // Translation Assignments
   ...applyTranslationmatrixToPointAssignmentList,
   ...translationMatrix2dAssignmentList,
   ...applyTranslationMatrixToPolygonAssignmentList,
   ...fillInTranslationMatrixAssignmentList,
-  
 
-  // Scale Matrix Assignments
+  // Scale Assignments
   ...scalePointAssignmentList,
   ...scalePolygonAssignmentList,
   ...applyScaleMatrixToPointAssignmentList,
   ...applyScaleMatrixToPolygonAssignmentList,
 
-  // Rotation Matrix Assignments
+  // Rotation Assignments
   ...rotationMatrixFillInWithOptionsAssignments,
   ...rotationMatrixFillInBlankAssignments,
   ...orderingMatricesAssignments,

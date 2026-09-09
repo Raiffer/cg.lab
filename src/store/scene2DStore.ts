@@ -31,6 +31,7 @@ type Scene2DStore = {
     pointId: string,
     position: [number, number]
   ) => void;
+  movePolygon: (polygonId: string, delta: [number, number]) => void;
   moveVector: (
     id: string,
     tail: [number, number],
@@ -176,6 +177,27 @@ export const useScene2DStore = create<Scene2DStore>((set, get) => ({
                 points: polygon.points.map(point =>
                   point.id === pointId ? { ...point, position } : point
                 ),
+              }
+            : polygon
+        ),
+      },
+    }));
+  },
+  movePolygon: (polygonId, delta) => {
+    set(state => ({
+      config: {
+        ...state.config,
+        polygons: state.config.polygons?.map(polygon =>
+          polygon.id === polygonId
+            ? {
+                ...polygon,
+                points: polygon.points.map(point => ({
+                  ...point,
+                  position: [
+                    point.position[0] + delta[0],
+                    point.position[1] + delta[1],
+                  ] as [number, number],
+                })),
               }
             : polygon
         ),

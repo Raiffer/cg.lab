@@ -34,7 +34,7 @@ function createScalePointAssignment({
       `Altere a matriz de escala para que o ponto fique na posição (${goalPointScale[0]}, ${goalPointScale[1]}).`,
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "scaling-matrix",
+    subjectCategory: "scaling",
     setup: () => {
       const { setPoints } = useScene2DStore.getState();
       setPoints([

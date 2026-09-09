@@ -21,6 +21,7 @@ export interface Matrix {
   matrixValue: MatrixValue[][];
   pointRefId?: string;
   polygonRefId?: string;
+  polygonRefIds?: string[];
   objectRefId?: string;
 }
 

@@ -23,7 +23,7 @@ function createTranslationMatrix2DAssignment({
     instructions: `Altere a matriz de translação para mover o ponto A para a posição (${goalPosition[0]}, ${goalPosition[1]}).`,
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       const { setPoints } = useScene2DStore.getState();
       setPoints([

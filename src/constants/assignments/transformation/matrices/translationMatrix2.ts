@@ -13,7 +13,7 @@ export const translationMatrixAssignment2: Assignment = {
   assisted: false,
   order: 2,
   type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-  subjectCategory: "translation-matrix",
+  subjectCategory: "translation",
   setup: () => {
     const { setPoints } = useScene2DStore.getState();
     setPoints([

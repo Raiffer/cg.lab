@@ -71,7 +71,7 @@ function createTranslationMatrixToPolygonAssignment({
     instructions: instructions || `Aplique a matriz de translação ao polígono.`,
     order,
     type: AssignmentType.INTERACTIVE,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       const { addPolygon } = useScene2DStore.getState();
       if (initialPolygon) {

@@ -86,7 +86,7 @@ function createRotationMatrixFillWithOptions3D({
       "Complete a matriz de rotação no cubo A para que fique igual ao cubo B.",
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS,
-    subjectCategory: "rotation-matrix",
+    subjectCategory: "rotation",
     setup() {
       const { addCube, addObjectiveCube } = useScene3DStore.getState();
       const cube: TCube = {

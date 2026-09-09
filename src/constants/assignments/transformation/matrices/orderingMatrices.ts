@@ -84,7 +84,7 @@ function createOrderMatrixMultiplication({
     assisted: false,
     order,
     type: AssignmentType.ORDER_MATRIX_MULTIPLICATION,
-    subjectCategory: "matrix-multiplication",
+    subjectCategory: "multiplication",
     setup() {
       const { setPolygons, setObjectivePolygons } = useScene2DStore.getState();
       setPolygons(initialPolygons);
