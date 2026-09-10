@@ -2,9 +2,7 @@ import { applyScaleMatrixToPointAssignmentList } from "./applyScaleMatrixToPoint
 import { applyScaleMatrixToPolygonAssignmentList } from "./applyScaleMatrixToPolygon";
 import { applyTranslationmatrixToPointAssignmentList } from "./applyTranslationMatrixToPoint";
 import { applyTranslationMatrixToPolygonAssignmentList } from "./applyTranslationMatrixToPolygon";
-import { constructInverseMatrixAssignmentList } from "./constructInverseMatrix";
 import { fillInTranslationMatrixAssignmentList } from "./fillInTranslationMatrix";
-import { identityMatrixAssignmentList } from "./identityMatrix";
 import { matrixCommutativityComparisonAssignmentList } from "./matrixCommutativityComparison";
 import { matrixElementIdentificationAssignmentList } from "./matrixElementIdentification";
 import { matrixSingularityPredictionAssignmentList } from "./matrixSingularityPrediction";
@@ -23,9 +21,6 @@ export const matricesAssignments = [
   ...matrixElementIdentificationAssignmentList,
   ...matrixSumSubtractionGapAssignmentList,
   ...matrixSingularityPredictionAssignmentList,
-
-  // Identity Matrix Assignments
-  ...identityMatrixAssignmentList,
 
   // Translation Assignments
   ...applyTranslationmatrixToPointAssignmentList,
@@ -47,7 +42,4 @@ export const matricesAssignments = [
   // Matrix Multiplication Assignments
   ...orderingMatricesAssignments,
   ...matrixCommutativityComparisonAssignmentList,
-
-  // Inverse Matrix Assignments
-  ...constructInverseMatrixAssignmentList,
 ];

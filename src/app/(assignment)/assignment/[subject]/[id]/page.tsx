@@ -146,6 +146,10 @@ export default function SpecificAssignmentPage({
   // Early return if no assignment loaded
   if (!assignment || !subjectData) return null;
 
+  // Some exercises (e.g. matrix identification) don't use the cartesian plane:
+  // hide the scene, paint the background white and center the question.
+  const hideCanvas = assignment.hideCanvas ?? false;
+
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
@@ -167,8 +171,11 @@ export default function SpecificAssignmentPage({
         </Button>
       </div>
 
-      {/* Render appropriate scene based on subject type */}
-      {subjectData.type === "2D" ? (
+      {/* Render appropriate scene based on subject type, or a blank white
+          background for exercises that don't use the cartesian plane */}
+      {hideCanvas ? (
+        <div className="fixed inset-0 bg-white" />
+      ) : subjectData.type === "2D" ? (
         <>
           <GenericScene2D config={config} />
           <ObjectivePanel2D />
@@ -185,41 +192,51 @@ export default function SpecificAssignmentPage({
 
       {/* Assignment interface container */}
       <div
-        className={`absolute bottom-4 bg-gray-200 rounded-md left-2 border-b-4 border-b-gray-400 overflow-hidden transition-[max-height,width,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isAssignmentMinimized
-            ? "w-3/4 md:w-[40%] max-h-12 opacity-95"
-            : "w-3/4 md:w-[40%] max-h-[80vh] opacity-100"
+        className={`absolute overflow-hidden transition-[max-height,width,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          hideCanvas
+            ? "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 md:w-[560px] rounded-xl bg-white border border-gray-200 shadow-xl"
+            : "bottom-4 left-2 w-3/4 md:w-[40%] rounded-md bg-gray-200 border-b-4 border-b-gray-400"
+        } ${
+          !hideCanvas && isAssignmentMinimized
+            ? "max-h-12 opacity-95"
+            : "max-h-[80vh] opacity-100"
         }`}
       >
-        <div className="flex items-center justify-between bg-gray-300 px-3 py-2 cursor-pointer select-none transition-colors duration-300 hover:bg-gray-200">
-          <span className="text-sm font-semibold text-gray-700">Questão</span>
-          <button
-            type="button"
-            aria-label={
-              isAssignmentMinimized
-                ? "Expandir painel da questão"
-                : "Minimizar painel da questão"
-            }
-            onClick={() => setIsAssignmentMinimized(value => !value)}
-            className="rounded-full p-1 transition-transform duration-300 hover:bg-gray-200"
-            style={{
-              transform: isAssignmentMinimized
-                ? "rotate(180deg)"
-                : "rotate(0deg)",
-            }}
-          >
-            <ChevronDown className="h-4 w-4" />
-          </button>
-        </div>
+        {!hideCanvas && (
+          <div className="flex items-center justify-between bg-gray-300 px-3 py-2 cursor-pointer select-none transition-colors duration-300 hover:bg-gray-200">
+            <span className="text-sm font-semibold text-gray-700">Questão</span>
+            <button
+              type="button"
+              aria-label={
+                isAssignmentMinimized
+                  ? "Expandir painel da questão"
+                  : "Minimizar painel da questão"
+              }
+              onClick={() => setIsAssignmentMinimized(value => !value)}
+              className="rounded-full p-1 transition-transform duration-300 hover:bg-gray-200"
+              style={{
+                transform: isAssignmentMinimized
+                  ? "rotate(180deg)"
+                  : "rotate(0deg)",
+              }}
+            >
+              <ChevronDown className="h-4 w-4" />
+            </button>
+          </div>
+        )}
 
         <div
-          className={`overflow-hidden transition-[max-height,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            isAssignmentMinimized
-              ? "max-h-0 opacity-0 -translate-y-2"
-              : "max-h-[70vh] opacity-100 translate-y-0"
-          }`}
+          className={
+            hideCanvas
+              ? "max-h-[80vh] overflow-y-auto"
+              : `overflow-hidden transition-[max-height,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  isAssignmentMinimized
+                    ? "max-h-0 opacity-0 -translate-y-2"
+                    : "max-h-[70vh] opacity-100 translate-y-0"
+                }`
+          }
         >
-          <div className="p-4 text-center">
+          <div className={`text-center ${hideCanvas ? "p-6" : "p-4"}`}>
             {/* Conditional rendering based on assignment state */}
             {assignmentState === "notAnswered" ? (
               <AssignmentNotAnswered

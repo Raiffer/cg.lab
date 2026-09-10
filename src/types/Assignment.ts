@@ -17,6 +17,12 @@ export interface Assignment {
   title: string;
   instructions: string;
   assisted: boolean;
+  /**
+   * When true, the assignment doesn't use the 2D/3D scene: the plane/grid is
+   * hidden, the background is plain white and the question panel is centered
+   * on the page. Used by exercises that only manipulate matrices/text.
+   */
+  hideCanvas?: boolean;
   type: AssignmentType;
   subjectCategory: SubjectCategories;
   setup: () => void;

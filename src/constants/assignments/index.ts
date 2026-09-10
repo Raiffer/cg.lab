@@ -91,15 +91,6 @@ const subjects: Subject[] = [
     type: "2D",
   },
   {
-    title: "Matriz Identidade",
-    description: "Aprenda o que torna uma matriz uma matriz identidade.",
-    slug: "identity-matrix",
-    assignments: transformationAssignments.filter(
-      assi => assi.subjectCategory === "identity-matrix"
-    ),
-    type: "2D",
-  },
-  {
     title: "Matriz de Translação",
     description: "Aprenda a criar matrizes de translação 2D.",
     slug: "translation",
@@ -132,15 +123,6 @@ const subjects: Subject[] = [
     slug: "multiplication",
     assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "multiplication"
-    ),
-    type: "2D",
-  },
-  {
-    title: "Matriz Inversa",
-    description: "Aprenda a construir a matriz que desfaz uma transformação.",
-    slug: "inverse-matrix",
-    assignments: transformationAssignments.filter(
-      assi => assi.subjectCategory === "inverse-matrix"
     ),
     type: "2D",
   },

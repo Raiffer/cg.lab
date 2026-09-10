@@ -64,8 +64,6 @@ export default function SubjectPage({
     scaling: "Escala",
     multiplication: "Multiplicação",
     "matrix-fundamentals": "Fundamentos de matrizes",
-    "identity-matrix": "Matriz identidade",
-    "inverse-matrix": "Matriz inversa",
   };
 
   return (
