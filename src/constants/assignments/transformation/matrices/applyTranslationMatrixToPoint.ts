@@ -24,15 +24,23 @@ function createTranslationMatrix2DAssignment({
   const targetPosition = vec.add(initialPosition, translation);
 
   return {
+    assisted: false,
     id: `apply-translation-matrix-2d-${order}`,
     title,
     instructions,
     order,
     type: AssignmentType.INTERACTIVE,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       const { setPoints } = useScene2DStore.getState();
       setPoints([
+        {
+          id: "A-initial",
+          label: "A₀",
+          position: initialPosition,
+          movable: false,
+          color: "lightgreen",
+        },
         {
           id: "A",
           label: "A",

@@ -17,12 +17,13 @@ function createTranslationMatrix2DAssignment({
   goalPosition,
 }: TranslationMatrix2DAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `translation-matrix-2d-${order}`,
     title: "Matriz de Translação",
     instructions: `Altere a matriz de translação para mover o ponto A para a posição (${goalPosition[0]}, ${goalPosition[1]}).`,
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       const { setPoints } = useScene2DStore.getState();
       setPoints([

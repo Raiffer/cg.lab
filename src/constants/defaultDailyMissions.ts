@@ -4,10 +4,10 @@ export type SubjectCategories =
   | "vector-sum"
   | "vector-scalar"
   | "vector-length"
-  | "translation-matrix"
-  | "rotation-matrix"
-  | "scaling-matrix"
-  | "matrix-multiplication"
+  | "translation"
+  | "rotation"
+  | "scaling"
+  | "multiplication"
   | "matrix-fundamentals"
   | "identity-matrix"
   | "inverse-matrix";
@@ -51,22 +51,22 @@ export const defaultDailyMissions: DailyMission[] = [
     subjectCategory: "vector-length",
   },
   {
-    id: "complete-5-exercises-on-translation-matrix",
-    title: "Complete 5 exercícios sobre Matriz de translação",
+    id: "complete-5-exercises-on-translation",
+    title: "Complete 5 exercícios sobre Translação",
     target: 5,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
   },
   {
-    id: "complete-5-exercises-on-rotation-matrix",
-    title: "Complete 5 exercícios sobre Matriz de rotação",
+    id: "complete-5-exercises-on-rotation",
+    title: "Complete 5 exercícios sobre Rotação",
     target: 5,
-    subjectCategory: "rotation-matrix",
+    subjectCategory: "rotation",
   },
   {
-    id: "complete-5-exercises-on-scaling-matrix",
-    title: "Complete 5 exercícios sobre Matriz de escala",
+    id: "complete-5-exercises-on-scaling",
+    title: "Complete 5 exercícios sobre Escala",
     target: 5,
-    subjectCategory: "scaling-matrix",
+    subjectCategory: "scaling",
   },
   {
     id: "complete-5-exercises-on-matrix-fundamentals",

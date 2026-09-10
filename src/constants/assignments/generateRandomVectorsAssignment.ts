@@ -63,6 +63,7 @@ function createVectorAssignment({
   validate: () => boolean;
 }): RandomGeneratedAssignment {
   return {
+    assisted: false,
     id: generateAssignmentId("vector-assignment"),
     dimensions: "2D",
     order: Math.floor(Math.random() * 100),

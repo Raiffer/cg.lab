@@ -84,8 +84,9 @@ function createMatrixCommutativityComparisonAssignment({
     order,
     title: title || "A·B é igual a B·A?",
     instructions: `Azul: A = ${describeConfig(matrixA)} depois B = ${describeConfig(matrixB)}. Painel: a mesma dupla, na ordem inversa. Os resultados são iguais?`,
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
-    subjectCategory: "matrix-multiplication",
+    subjectCategory: "multiplication",
     setup() {
       const { setPolygons, setObjectivePolygons } = useScene2DStore.getState();
       setPolygons([resultAB]);

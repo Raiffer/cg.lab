@@ -59,6 +59,7 @@ function createIdentityMatrixAssignment({
       (showObjective
         ? "Preencha a matriz que não altera o objeto (ele deve ficar sobre o contorno tracejado)."
         : "Preencha a matriz identidade — a que não altera nenhum objeto."),
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
     subjectCategory: "identity-matrix",
     setup() {

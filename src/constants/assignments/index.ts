@@ -1,7 +1,7 @@
 import { Assignment } from "@/types/Assignment";
-import { matricesAssignments } from "./matrices";
 import { matrices3dAssignments } from "./matrices3d";
 import { pointsAssignments } from "./points2d";
+import { transformationAssignments } from "./transformation";
 import { vectorAssignments } from "./vectors2d";
 import {
   generateRandomFillInTheBlankWithOptionsPointAssignment,
@@ -85,7 +85,7 @@ const subjects: Subject[] = [
     description:
       "Aprenda a ler índices, somar, subtrair e verificar propriedades básicas de matrizes.",
     slug: "matrix-fundamentals",
-    assignments: matricesAssignments.filter(
+    assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "matrix-fundamentals"
     ),
     type: "2D",
@@ -94,7 +94,7 @@ const subjects: Subject[] = [
     title: "Matriz Identidade",
     description: "Aprenda o que torna uma matriz uma matriz identidade.",
     slug: "identity-matrix",
-    assignments: matricesAssignments.filter(
+    assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "identity-matrix"
     ),
     type: "2D",
@@ -102,36 +102,36 @@ const subjects: Subject[] = [
   {
     title: "Matriz de Translação",
     description: "Aprenda a criar matrizes de translação 2D.",
-    slug: "translation-matrix",
-    assignments: matricesAssignments.filter(
-      assi => assi.subjectCategory === "translation-matrix"
+    slug: "translation",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "translation"
     ),
     type: "2D",
   },
   {
     title: "Matriz de Escala",
     description: "Aprenda a criar matrizes de escala 2D.",
-    slug: "scaling-matrix",
-    assignments: matricesAssignments.filter(
-      assi => assi.subjectCategory === "scaling-matrix"
+    slug: "scaling",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "scaling"
     ),
     type: "2D",
   },
   {
     title: "Matriz de Rotação",
     description: "Aprenda a criar matrizes de rotação 2D.",
-    slug: "rotation-matrix",
-    assignments: matricesAssignments.filter(
-      assi => assi.subjectCategory === "rotation-matrix"
+    slug: "rotation",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "rotation"
     ),
     type: "2D",
   },
   {
     title: "Multiplicação de Matrizes",
     description: "Aprenda a multiplicar matrizes 2D.",
-    slug: "matrix-multiplication",
-    assignments: matricesAssignments.filter(
-      assi => assi.subjectCategory === "matrix-multiplication"
+    slug: "multiplication",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "multiplication"
     ),
     type: "2D",
   },
@@ -139,7 +139,7 @@ const subjects: Subject[] = [
     title: "Matriz Inversa",
     description: "Aprenda a construir a matriz que desfaz uma transformação.",
     slug: "inverse-matrix",
-    assignments: matricesAssignments.filter(
+    assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "inverse-matrix"
     ),
     type: "2D",
@@ -198,8 +198,8 @@ export const subjectOptions = [
     ],
   },
   {
-    id: "translation-matrix",
-    label: "Matriz de translação",
+    id: "translation",
+    label: "Translação",
     generators: [
       generate2DTranslationMatrixAssignment,
       generate2DFillInTranslationMatrixAssignment,
@@ -207,18 +207,18 @@ export const subjectOptions = [
     ],
   },
   {
-    id: "scale-matrix",
-    label: "Matriz de escala",
+    id: "scaling",
+    label: "Escala",
     generators: [generate2DScaleMatrixAssignment],
   },
   {
-    id: "rotation-matrix",
-    label: "Matriz de rotação",
+    id: "rotation",
+    label: "Rotação",
     generators: [generate2DRotationMatrixAssignment],
   },
   {
-    id: "matrix-multiplication",
-    label: "Multiplicação de matrizes",
+    id: "multiplication",
+    label: "Multiplicação",
     generators: [generate2DMatrixMultiplicationSortingAssignment],
   },
 ] as const;

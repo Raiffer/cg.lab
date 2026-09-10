@@ -28,6 +28,18 @@ export const getUserByEmail = mutation({
   },
 });
 
+export const getUserByMatricula = mutation({
+  args: {
+    matricula: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .filter(q => q.eq(q.field("matricula"), args.matricula))
+      .unique();
+  },
+});
+
 export const updateUserStreak = mutation({
   handler: async ctx => {
     const userId = await getAuthUserId(ctx);

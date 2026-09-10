@@ -23,6 +23,7 @@ function createTranslationMatrixFillInput3D({
   targetTranslation,
 }: TranslationMatrixFillInput3DProps): Assignment {
   return {
+    assisted: false,
     id: `translation-matrix-fill-input-${order}`,
     title: title || "Matriz de Translação 3D",
     instructions:
@@ -30,7 +31,7 @@ function createTranslationMatrixFillInput3D({
       "Altere a matriz de translação no cubo A para que fique igual ao cubo B.",
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup() {
       const { addCube, addObjectiveCube } = useScene3DStore.getState();
       const cube: TCube = {

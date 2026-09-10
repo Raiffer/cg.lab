@@ -49,6 +49,7 @@ function createMatrixSumSubtractionGapAssignment({
     order,
     title: title || "Soma e Subtração com Lacuna",
     instructions: `Complete o elemento que falta em C = A ${operatorSymbol} B.`,
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
     subjectCategory: "matrix-fundamentals",
     setup() {

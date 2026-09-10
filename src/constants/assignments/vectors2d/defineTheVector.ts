@@ -19,6 +19,7 @@ function createDefineTheVectorAssignment({
   pointB,
 }: DefineTheVectorAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `define-the-vector-${order}`,
     title,
     instructions,

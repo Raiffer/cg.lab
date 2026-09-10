@@ -1,4 +1,4 @@
-import { Polygon, Transform, Vector } from "mafs";
+import { MovablePoint, Polygon, Transform, Vector } from "mafs";
 import { useMemo } from "react";
 import CustomPoint from "./custom-point";
 import { TPolygon } from "@/types/Scene2DConfig";
@@ -7,14 +7,17 @@ import {
   applyTransformationsToPoint,
   applyTransformationsToPolygon,
 } from "@/utils/matrix";
+import { useScene2DStore } from "@/store/scene2DStore";
 
 interface Props {
   polygon: TPolygon;
 }
 
 const AXIS_LENGTH = 1; // Length of coordinate axes vectors
+const GRID_STEP = 0.5;
 
 const CustomPolygon = ({ polygon }: Props) => {
+  const { movePolygon } = useScene2DStore();
   // Calculate polygon center in local space
   const polygonCenter = useMemo(() => {
     if (polygon.points.length === 0) return [0, 0] as [number, number];
@@ -89,6 +92,28 @@ const CustomPolygon = ({ polygon }: Props) => {
     };
   }, [polygon.rotationMatrix, transformedCenter, localAxes]);
 
+  const handleFullPolygonMove = (newCenter: [number, number]) => {
+    movePolygon(polygon.id, [
+      newCenter[0] - polygonCenter[0],
+      newCenter[1] - polygonCenter[1],
+    ]);
+  };
+
+  const constrainFullPolygonMove = ([x, y]: [number, number]) =>
+    [
+      Math.round(x / GRID_STEP) * GRID_STEP,
+      Math.round(y / GRID_STEP) * GRID_STEP,
+    ] as [number, number];
+
+  const fullMovablePoint = polygon.fullMovable ? (
+    <MovablePoint
+      point={polygonCenter}
+      color={polygon.color}
+      constrain={constrainFullPolygonMove}
+      onMove={handleFullPolygonMove}
+    />
+  ) : null;
+
   // Early return for simple polygons
   if (transformedPolygon.points.length < 4) {
     return (
@@ -104,9 +129,17 @@ const CustomPolygon = ({ polygon }: Props) => {
           color={transformedPolygon.color}
           strokeStyle={transformedPolygon.strokeStyle}
         />
-        {transformedPolygon.points.map(point => (
-          <CustomPoint key={point.id} point={point} polygonId={polygon.id} />
-        ))}
+        {fullMovablePoint}
+        {transformedPolygon.points.map(
+          point =>
+            !polygon.fullMovable && (
+              <CustomPoint
+                key={point.id}
+                point={point}
+                polygonId={polygon.id}
+              />
+            )
+        )}
       </Transform>
     );
   }
@@ -124,8 +157,10 @@ const CustomPolygon = ({ polygon }: Props) => {
         color={transformedPolygon.color}
         strokeStyle={transformedPolygon.strokeStyle}
       />
+      {fullMovablePoint}
       {transformedPolygon.points.map(
         point =>
+          !polygon.fullMovable &&
           point.movable && (
             <CustomPoint
               key={point.id}

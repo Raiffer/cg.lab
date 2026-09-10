@@ -20,6 +20,7 @@ function createVectorScalarFillInCoordsAssignment({
   scalar,
 }: VectorScalarFillInCoordsAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `vector-scalar-fill-in-coords-${order}`,
     title: title || "Multiplicação de vetor por escalar",
     instructions:

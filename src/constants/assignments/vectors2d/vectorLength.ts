@@ -20,6 +20,7 @@ function createVectorLengthFormulaAssignment({
   dimentions,
 }: VectorLengthFormulaAssignmentProps): Assignment {
   return {
+    assisted: false,
     id: `vector-length-${order}`,
     title: "Comprimento do Vetor",
     instructions:

@@ -23,6 +23,7 @@ function createVectorSumInsertResultAssignment({
   vectorBTip,
 }: VectorSumInsertResultProps): Assignment {
   return {
+    assisted: false,
     id: `insert-vector-sum-${order}`,
     title,
     instructions,
@@ -73,7 +74,7 @@ function createVectorSumInsertResultAssignment({
       const inputY = Number(input.coordinatesValue.y);
       const isCorrect = inputX === sum[0] && inputY === sum[1];
 
-      if (isCorrect) {
+      if (isCorrect && !getVector("c")) {
         addVector({
           id: "c",
           tail: [0, 0],

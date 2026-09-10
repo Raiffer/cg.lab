@@ -43,6 +43,7 @@ function createFillInTranslationMatrixAssignment({
   ]);
 
   return {
+    assisted: false,
     id: `fill-in-translation-matrix-${order}`,
     title: title || "Matriz de Translação",
     instructions:
@@ -50,7 +51,7 @@ function createFillInTranslationMatrixAssignment({
       "Preencha a matriz de translação para mover o quadrado para a posição objetivo.",
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup() {
       const { addPolygon, setObjectivePolygons } = useScene2DStore.getState();
       addPolygon(square);

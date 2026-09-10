@@ -23,7 +23,12 @@ export default function FillInMatrixWithOptions() {
 
   // Tracks changes to the matrix and processes updates
   useEffect(() => {
-    if (!matrix?.objectRefId && !matrix?.polygonRefId) return;
+    if (
+      !matrix?.objectRefId &&
+      !matrix?.polygonRefId &&
+      !matrix?.polygonRefIds?.length
+    )
+      return;
 
     const editableCells = matrix.matrixValue
       .flat()
@@ -75,7 +80,7 @@ export default function FillInMatrixWithOptions() {
     }
 
     // If the matrix has a polygon reference, set the rotation matrix
-    if (matrix.polygonRefId) {
+    if (matrix.polygonRefId || matrix.polygonRefIds?.length) {
       const customMatrix = new Matrix3().set(
         matrixElements[0],
         matrixElements[1],
@@ -87,7 +92,10 @@ export default function FillInMatrixWithOptions() {
         matrixElements[7],
         matrixElements[8]
       );
-      setPolygonRotationMatrix(matrix.polygonRefId, customMatrix);
+      const polygonIds = matrix.polygonRefIds ?? [matrix.polygonRefId!];
+      polygonIds.forEach(polygonId =>
+        setPolygonRotationMatrix(polygonId, customMatrix)
+      );
     }
   }, [
     matrix,
@@ -127,8 +135,11 @@ export default function FillInMatrixWithOptions() {
       setCubeCustomYRotationMatrix(matrix.objectRefId, null);
       setCubeCustomZRotationMatrix(matrix.objectRefId, null);
     }
-    if (matrix?.polygonRefId) {
-      setPolygonRotationMatrix(matrix.polygonRefId, undefined);
+    if (matrix?.polygonRefId || matrix?.polygonRefIds?.length) {
+      const polygonIds = matrix.polygonRefIds ?? [matrix.polygonRefId!];
+      polygonIds.forEach(polygonId =>
+        setPolygonRotationMatrix(polygonId, undefined)
+      );
     }
   };
 

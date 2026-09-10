@@ -27,20 +27,20 @@ export const matricesAssignments = [
   // Identity Matrix Assignments
   ...identityMatrixAssignmentList,
 
-  // Translation Matrix Assignments
-  ...translationMatrix2dAssignmentList,
+  // Translation Assignments
   ...applyTranslationmatrixToPointAssignmentList,
-  ...fillInTranslationMatrixAssignmentList,
+  ...translationMatrix2dAssignmentList,
   ...applyTranslationMatrixToPolygonAssignmentList,
+  ...fillInTranslationMatrixAssignmentList,
 
-  // Scale Matrix Assignments
+  // Scale Assignments
   ...scalePointAssignmentList,
   ...scalePolygonAssignmentList,
   ...applyScaleMatrixToPointAssignmentList,
   ...applyScaleMatrixToPolygonAssignmentList,
   ...scaleForDoubleAreaAssignmentList,
 
-  // Rotation Matrix Assignments
+  // Rotation Assignments
   ...rotationMatrixFillInWithOptionsAssignments,
   ...rotationMatrixFillInBlankAssignments,
 

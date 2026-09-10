@@ -69,8 +69,9 @@ function createScaleForDoubleAreaAssignment({
     order,
     title: title || "Escalar que Altera a Área",
     instructions: `Preencha o mesmo k na diagonal para que a área ${areaWord}, sem distorcer a forma. Dica: k = √${areaMultiplier}.`,
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "scaling-matrix",
+    subjectCategory: "scaling",
     setup() {
       const { addPolygon, setObjectivePolygons } = useScene2DStore.getState();
       addPolygon(polygon);

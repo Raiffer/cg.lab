@@ -24,6 +24,7 @@ function createPointPositionWithOptionsAssignment({
   const optionsShuffled = shuffleArray(options);
 
   return {
+    assisted: false,
     id: `point-position-${order}`,
     order,
     title,

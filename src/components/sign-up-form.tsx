@@ -34,6 +34,11 @@ export const signUpSchema = z
     name: z.string({ message: "Nome é obrigatório" }).min(1, {
       message: "Nome é obrigatório",
     }),
+    matricula: z
+      .string({ message: "Matrícula é obrigatória" })
+      .regex(/^\d{6}$/, {
+        message: "Matrícula deve conter exatamente 6 números",
+      }),
     email: z.string({ message: "Email é obrigatório" }).email({
       message: "Email inválido",
     }),
@@ -58,6 +63,7 @@ export default function SignUpForm() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
+      matricula: "",
       email: "",
       password: "",
       passwordConfirmation: "",
@@ -65,6 +71,9 @@ export default function SignUpForm() {
   });
 
   const checkEmailAlreadyExists = useMutation(api.users.getUserByEmail);
+  const checkMatriculaAlreadyExists = useMutation(
+    api.users.getUserByMatricula
+  );
 
   const handleSubmit = async (values: SignUpFormData) => {
     const user = await checkEmailAlreadyExists({
@@ -80,12 +89,26 @@ export default function SignUpForm() {
       return;
     }
 
+    const userWithMatricula = await checkMatriculaAlreadyExists({
+      matricula: values.matricula,
+    });
+
+    if (userWithMatricula) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao registrar",
+        description: "A matrícula informada já está em uso",
+      });
+      return;
+    }
+
     try {
       await signIn("password", {
         flow: "signUp",
         email: values.email,
         password: values.password,
         name: values.name,
+        matricula: values.matricula,
       });
     } catch (error) {
       console.error("Failed to sign up", error);
@@ -112,6 +135,28 @@ export default function SignUpForm() {
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="matricula"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Matrícula</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      inputMode="numeric"
+                      maxLength={6}
+                      onChange={e =>
+                        field.onChange(
+                          e.target.value.replace(/\D/g, "").slice(0, 6)
+                        )
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

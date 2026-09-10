@@ -26,6 +26,7 @@ function createPointAssignment({
   validate: () => boolean;
 }): RandomGeneratedAssignment {
   return {
+    assisted: false,
     id: `assignment-${Math.random().toString(36).substring(7)}`,
     order: Math.floor(Math.random() * 100),
     dimensions: "2D",

@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useState } from "react";
-import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
 import { Matrix3, Matrix4 } from "three";
 import { useOrderMatrixStore } from "@/store/orderMatrixMultiplicationStore";

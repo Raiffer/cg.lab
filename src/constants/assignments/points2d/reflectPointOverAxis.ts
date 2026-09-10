@@ -26,6 +26,7 @@ function createReflectPointOverAxisAssignment({
     order,
     title,
     instructions,
+    assisted: false,
     type: AssignmentType.INTERACTIVE,
     subjectCategory: "points",
     setup: () => {

@@ -16,6 +16,7 @@ export interface Assignment {
   order: number;
   title: string;
   instructions: string;
+  assisted: boolean;
   type: AssignmentType;
   subjectCategory: SubjectCategories;
   setup: () => void;

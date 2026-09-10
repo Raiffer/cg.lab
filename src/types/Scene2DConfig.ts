@@ -32,6 +32,7 @@ export type TPolygon = {
   opacity?: number;
   strokeStyle?: "solid" | "dashed";
   movable?: boolean;
+  fullMovable?: boolean;
   scale?: [number, number];
   rotation?: number;
   translation?: [number, number];

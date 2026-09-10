@@ -9,7 +9,8 @@ import {
   applyTransformationsToPolygon,
   create2DRotationMatrix,
 } from "@/utils/matrix";
-import { createSquare } from "@/utils/polygon";
+import { createTetrisPiece } from "@/utils/polygon";
+import { TetrisPieceType } from "@/types/TetrisPiece";
 
 interface RotationMatrixFillInBlankProps {
   order: number;
@@ -27,34 +28,41 @@ function createRotationmatrixFillInBlankAssignment({
 }: RotationMatrixFillInBlankProps): Assignment {
   const { squareCenter, squareSize } = squareProps;
 
-  const square = createSquare("square", "blue", squareCenter, squareSize);
+  const piece = createTetrisPiece(
+    "square",
+    "blue",
+    squareCenter,
+    TetrisPieceType.Z,
+    squareSize
+  );
 
   return {
+    assisted: false,
     id: `rotation-matrix-${order}`,
     title: "Matriz de Rotação no eixo Z",
     instructions:
       "Altere a matriz de rotação para rotacionar o quadrado para o objetivo.",
     order,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "rotation-matrix",
+    subjectCategory: "rotation",
     setup: () => {
       const { addPolygon, setObjectivePolygons } = useScene2DStore.getState();
-      addPolygon({ ...square, displayAxes: true });
-      setObjectivePolygons([
-        {
+      piece.forEach(square => addPolygon(square));
+      setObjectivePolygons(
+        piece.map((square, index) => ({
           ...square,
-          id: "target-square",
+          id: `target-square-${index + 1}`,
           color: "green",
           rotationMatrix:
             create2DRotationMatrix(targetAngleInDegrees).transpose(),
-          displayAxes: true,
-        },
-      ]);
+        }))
+      );
 
       const { addMatrix } = useFillBlankMatrixInputStore.getState();
       addMatrix({
         id: "rotation-matrix-z",
-        polygonRefId: "square",
+        polygonRefId: piece[0].id,
+        polygonRefIds: piece.map(square => square.id),
         type: MatrixType.ROTATION_Z,
         dimention: "2D",
         matrixValue: initial2DRotationMatrixZValue,
@@ -63,41 +71,39 @@ function createRotationmatrixFillInBlankAssignment({
     validate: () => {
       const { getMatrixById } = useFillBlankMatrixInputStore.getState();
       const matrix = getMatrixById("rotation-matrix-z");
-      const square = useScene2DStore.getState().getPolygon("square");
-      const targetSquare = useScene2DStore
-        .getState()
-        .getObjectivePolygon("target-square");
-      if (
-        !matrix ||
-        !square ||
-        !targetSquare ||
-        !square.rotationMatrix ||
-        !targetSquare.rotationMatrix
-      )
-        return false;
+      if (!matrix?.polygonRefIds?.length) return false;
+      const scene = useScene2DStore.getState();
 
-      const transformedCurrentSquare = applyTransformationsToPolygon(square, [
-        square.rotationMatrix,
-      ]);
-      const transformedTargetSquare = applyTransformationsToPolygon(
-        targetSquare,
-        [targetSquare.rotationMatrix]
-      );
-
-      // Check if the transformed square points match the target square points
-      for (let i = 0; i < transformedCurrentSquare.points.length; i++) {
-        const currentPoint = transformedCurrentSquare.points[i].position;
-        const targetPoint = transformedTargetSquare.points[i].position;
-        // Allow a small tolerance for floating point comparisons
+      return matrix.polygonRefIds.every((polygonId, index) => {
+        const polygon = scene.getPolygon(polygonId);
+        const targetPolygon = scene.getObjectivePolygon(
+          `target-square-${index + 1}`
+        );
         if (
-          Math.abs(currentPoint[0] - targetPoint[0]) > 0.01 ||
-          Math.abs(currentPoint[1] - targetPoint[1]) > 0.01
+          !polygon ||
+          !polygon.rotationMatrix ||
+          !targetPolygon?.rotationMatrix
         ) {
           return false;
         }
-      }
 
-      return true;
+        const transformedCurrentPolygon = applyTransformationsToPolygon(
+          polygon,
+          [polygon.rotationMatrix]
+        );
+        const transformedTargetPolygon = applyTransformationsToPolygon(
+          targetPolygon,
+          [targetPolygon.rotationMatrix]
+        );
+
+        return transformedCurrentPolygon.points.every((point, pointIndex) => {
+          const targetPoint = transformedTargetPolygon.points[pointIndex];
+          return (
+            Math.abs(point.position[0] - targetPoint.position[0]) <= 0.01 &&
+            Math.abs(point.position[1] - targetPoint.position[1]) <= 0.01
+          );
+        });
+      });
     },
   };
 }

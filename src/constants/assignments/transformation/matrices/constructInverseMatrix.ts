@@ -61,6 +61,7 @@ function createConstructInverseMatrixAssignment(
     order,
     title: title || "Construa a Matriz Inversa",
     instructions: `Preencha B, inversa de A = ${matrixLabel}, para o quadrado voltar ao contorno tracejado.`,
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
     subjectCategory: "inverse-matrix",
     setup() {

@@ -92,6 +92,7 @@ function createMatrixElementIdentificationAssignment({
     order,
     title: title || "Identificação de Posição",
     instructions: `Qual é o valor do elemento ${elementNotation} (linha ${targetRow}, coluna ${targetCol}) de A?`,
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "matrix-fundamentals",
     setup() {

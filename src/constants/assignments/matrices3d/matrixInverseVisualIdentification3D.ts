@@ -73,6 +73,7 @@ function createMatrixInverseVisualIdentification3DAssignment({
     order,
     title: title || "Qual Matriz Desfaz a Transformação?",
     instructions: `A = ${transformDescription} foi aplicada ao cubo. Escolha a matriz que desfaz essa transformação (a inversa de A).`,
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "inverse-matrix",
     setup() {

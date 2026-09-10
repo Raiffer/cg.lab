@@ -15,6 +15,7 @@ function createPointDisplacementAssignment({
   goalPosition,
 }: PointDisplacementInputProps): Assignment {
   return {
+    assisted: false,
     id: `point-displacement-${order}`,
     title: `Desloque o ponto`,
     instructions: `Descreva o vetor de deslocamento do ponto para a posição (${goalPosition[0]}, ${goalPosition[1]}).`,

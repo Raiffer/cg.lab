@@ -54,6 +54,7 @@ function createMatrixSingularityPredictionAssignment({
     title: title || "Essa Matriz Tem Inversa?",
     instructions:
       "As linhas de A formam o paralelogramo sombreado. Ele tem área, ou achatou numa linha?",
+    assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "matrix-fundamentals",
     setup() {

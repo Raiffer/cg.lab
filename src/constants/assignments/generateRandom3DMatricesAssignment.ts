@@ -30,6 +30,7 @@ function createMatrixAssignment({
   validate: () => boolean;
 }) {
   return {
+    assisted: false,
     id: "matrix-assignment",
     dimensions: "3D" as "2D" | "3D",
     order: Math.floor(Math.random() * 100),
@@ -52,7 +53,7 @@ export function generate3DFillInTranslationMatrixAssignment(): RandomGeneratedAs
     title: "Complete a matriz de translação 3D",
     instructions: `Complete a matriz de Translação para que mova o cubo A para que fique igual ao cubo B`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "translation-matrix",
+    subjectCategory: "translation",
     setup: () => {
       const { addCube, addObjectiveCube, reset } = useScene3DStore.getState();
       reset();
@@ -109,7 +110,7 @@ export function generate3DFillInScaleMatrixAssignment(): RandomGeneratedAssignme
     title: "Complete a matriz de escala 3D",
     instructions: `Complete a matriz de Escala para que o cubo A fique igual ao cubo B`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
-    subjectCategory: "scaling-matrix",
+    subjectCategory: "scaling",
     setup() {
       const { addCube, addObjectiveCube, reset } = useScene3DStore.getState();
       reset();
