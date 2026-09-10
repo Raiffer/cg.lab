@@ -81,6 +81,25 @@ const subjects: Subject[] = [
     type: "2D",
   },
   {
+    title: "Fundamentos de Matrizes",
+    description:
+      "Aprenda a ler índices, somar, subtrair e verificar propriedades básicas de matrizes.",
+    slug: "matrix-fundamentals",
+    assignments: matricesAssignments.filter(
+      assi => assi.subjectCategory === "matrix-fundamentals"
+    ),
+    type: "2D",
+  },
+  {
+    title: "Matriz Identidade",
+    description: "Aprenda o que torna uma matriz uma matriz identidade.",
+    slug: "identity-matrix",
+    assignments: matricesAssignments.filter(
+      assi => assi.subjectCategory === "identity-matrix"
+    ),
+    type: "2D",
+  },
+  {
     title: "Matriz de Translação",
     description: "Aprenda a criar matrizes de translação 2D.",
     slug: "translation-matrix",
@@ -113,6 +132,15 @@ const subjects: Subject[] = [
     slug: "matrix-multiplication",
     assignments: matricesAssignments.filter(
       assi => assi.subjectCategory === "matrix-multiplication"
+    ),
+    type: "2D",
+  },
+  {
+    title: "Matriz Inversa",
+    description: "Aprenda a construir a matriz que desfaz uma transformação.",
+    slug: "inverse-matrix",
+    assignments: matricesAssignments.filter(
+      assi => assi.subjectCategory === "inverse-matrix"
     ),
     type: "2D",
   },

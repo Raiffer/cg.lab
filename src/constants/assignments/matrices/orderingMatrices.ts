@@ -269,6 +269,47 @@ const orderingMatricesAssignmentsProps: Omit<
       { type: "translation", values: [0.5, 0.5] },
     ],
   },
+  // Nível avançado: quatro transformações em sequência, com duas matrizes
+  // distratoras que não fazem parte da solução
+  {
+    title: "Quatro passos",
+    instructions:
+      "Selecione, na ordem correta, as matrizes para transformar o quadrado para o objetivo",
+    initialPolygons: [createSquare("square1", "blue", [1, 1], [1, 1])],
+    objectiveTransformations: [
+      create2DTranslationMatrix(-1, -1),
+      create2DRotationMatrix(90),
+      create2DScaleMatrix(1.5, 1.5),
+      create2DTranslationMatrix(1, 1),
+    ],
+    availableTransformations: [
+      { type: "translation", values: [-1, -1] },
+      { type: "rotation", values: 90 },
+      { type: "scale", values: [1.5, 1.5] },
+      { type: "translation", values: [1, 1] },
+      { type: "rotation", values: -90 },
+      { type: "scale", values: [2, 2] },
+    ],
+  },
+  // Nível avançado: distratoras que revertem o efeito correto, para forçar
+  // atenção ao sinal de cada transformação, não só ao tipo
+  {
+    title: "Cuidado com o sinal",
+    instructions:
+      "Selecione, na ordem correta, as matrizes para transformar o quadrado para o objetivo",
+    initialPolygons: [createSquare("square1", "blue", [2, 0], [1, 1])],
+    objectiveTransformations: [
+      create2DTranslationMatrix(-2, 0),
+      create2DRotationMatrix(45),
+      create2DTranslationMatrix(2, 0),
+    ],
+    availableTransformations: [
+      { type: "translation", values: [-2, 0] },
+      { type: "translation", values: [2, 0] },
+      { type: "rotation", values: 45 },
+      { type: "rotation", values: -45 },
+    ],
+  },
 ];
 
 export const orderingMatricesAssignments = orderingMatricesAssignmentsProps.map(

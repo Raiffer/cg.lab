@@ -22,6 +22,9 @@ export interface Matrix {
   pointRefId?: string;
   polygonRefId?: string;
   objectRefId?: string;
+  /** Optional heading shown above the grid (e.g. "A", "B", "C = A + B") — used when
+   * more than one matrix is displayed at once and they need to be told apart. */
+  label?: string;
 }
 
 interface FillBlankMatrixInputStore {

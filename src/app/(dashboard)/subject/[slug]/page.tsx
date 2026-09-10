@@ -62,6 +62,9 @@ export default function SubjectPage({
     "rotation-matrix": "Matriz de rotação",
     "scaling-matrix": "Matriz de escala",
     "matrix-multiplication": "Multiplicação de matrizes",
+    "matrix-fundamentals": "Fundamentos de matrizes",
+    "identity-matrix": "Matriz identidade",
+    "inverse-matrix": "Matriz inversa",
   };
 
   return (

@@ -7,7 +7,10 @@ export type SubjectCategories =
   | "translation-matrix"
   | "rotation-matrix"
   | "scaling-matrix"
-  | "matrix-multiplication";
+  | "matrix-multiplication"
+  | "matrix-fundamentals"
+  | "identity-matrix"
+  | "inverse-matrix";
 
 export type DailyMission = {
   id: string;
@@ -64,5 +67,23 @@ export const defaultDailyMissions: DailyMission[] = [
     title: "Complete 5 exercícios sobre Matriz de escala",
     target: 5,
     subjectCategory: "scaling-matrix",
+  },
+  {
+    id: "complete-5-exercises-on-matrix-fundamentals",
+    title: "Complete 5 exercícios sobre Fundamentos de matrizes",
+    target: 5,
+    subjectCategory: "matrix-fundamentals",
+  },
+  {
+    id: "complete-5-exercises-on-identity-matrix",
+    title: "Complete 5 exercícios sobre a Matriz identidade",
+    target: 5,
+    subjectCategory: "identity-matrix",
+  },
+  {
+    id: "complete-5-exercises-on-inverse-matrix",
+    title: "Complete 5 exercícios sobre Matriz inversa",
+    target: 5,
+    subjectCategory: "inverse-matrix",
   },
 ];

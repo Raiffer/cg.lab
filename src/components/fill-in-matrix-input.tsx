@@ -119,6 +119,19 @@ export default function FillInMatrixInput({ matrix }: Props) {
         if (translation.some(isNaN)) return; // Do nothing if any value is NaN
         setPolygonTranslation(matrix.polygonRefId, translation);
       }
+
+      if (matrix.type === MatrixType.IDENTITY) {
+        // Generic 2x2 linear map: the typed cells are applied directly as
+        // matrix entries (unlike ROTATION_Z, which interprets them as angles).
+        // Used for exercises where the student types the raw matrix values.
+        const a = Number(matrix.matrixValue[0][0].value);
+        const b = Number(matrix.matrixValue[0][1].value);
+        const c = Number(matrix.matrixValue[1][0].value);
+        const d = Number(matrix.matrixValue[1][1].value);
+        if ([a, b, c, d].some(isNaN)) return;
+        const customMatrix = new Matrix3().set(a, b, 0, c, d, 0, 0, 0, 1);
+        setPolygonRotationMatrix(matrix.polygonRefId, customMatrix);
+      }
     }
 
     if (matrix.objectRefId) {
@@ -262,6 +275,11 @@ export default function FillInMatrixInput({ matrix }: Props) {
 
   return (
     <div className="my-4">
+      {matrix.label && (
+        <div className="text-center text-sm font-semibold mb-1">
+          {matrix.label}
+        </div>
+      )}
       <div className="relative matrix">
         {matrix.matrixValue.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-between">
