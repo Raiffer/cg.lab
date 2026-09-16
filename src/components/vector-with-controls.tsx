@@ -44,9 +44,12 @@ export default function VectorWithControls({ vector }: { vector: TVector }) {
     <>
       <Vector tail={vector.tail} tip={vector.tip} color={vector.color} />
 
-      {vector.label && (
+      {(vector.label || vector.showValue) && (
         <Transform translate={translate}>
-          <LaTeX at={middle} tex={vector.label} />
+          <LaTeX
+            at={middle}
+            tex={vector.showValue ? `(${dx}, ${dy})` : vector.label || ""}
+          />
         </Transform>
       )}
 

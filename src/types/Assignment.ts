@@ -21,6 +21,8 @@ export interface Assignment {
   subjectCategory: SubjectCategories;
   setup: () => void;
   validate: () => boolean;
+  onError?: () => void;
+  showObjective?: boolean;
 }
 
 export interface RandomGeneratedAssignment extends Assignment {

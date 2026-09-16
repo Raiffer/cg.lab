@@ -7,6 +7,7 @@ interface TransformationMovePolygonAssignmentProps {
   initialCenter: [number, number];
   size: [number, number];
   goalCenter: [number, number];
+  assisted?: boolean;
 }
 
 function createTransformationMovePolygonAssignment({
@@ -14,6 +15,7 @@ function createTransformationMovePolygonAssignment({
   initialCenter,
   size,
   goalCenter,
+  assisted = false,
 }: TransformationMovePolygonAssignmentProps): Assignment {
   const initialPoints = generateSquarePoints(initialCenter, size);
   const translation: [number, number] = [
@@ -21,8 +23,8 @@ function createTransformationMovePolygonAssignment({
     goalCenter[1] - initialCenter[1],
   ];
 
-  return {
-    assisted: false,
+  const assignment: Assignment = {
+    assisted,
     id: `transformation-move-polygon-${order}`,
     order,
     title: "Translade o polígono",
@@ -54,6 +56,16 @@ function createTransformationMovePolygonAssignment({
           })),
         },
       ]);
+      useScene2DStore.getState().setVectors([
+        {
+          id: "translation-vector",
+          tail: initialCenter,
+          tip: initialCenter,
+          followPolygonId: "polygon",
+          color: "green",
+          showValue: assignment.assisted,
+        },
+      ]);
     },
     validate: () => {
       const polygon = useScene2DStore.getState().getPolygon("polygon");
@@ -73,16 +85,22 @@ function createTransformationMovePolygonAssignment({
         );
       });
     },
+    onError: () => {
+      assignment.assisted = true;
+    },
   };
+
+  return assignment;
 }
 
 const transformationMovePolygonAssignmentProps: TransformationMovePolygonAssignmentProps[] =
   [
     {
       order: 1,
-      initialCenter: [0, 0],
+      initialCenter: [2, 2],
       size: [2, 2],
-      goalCenter: [3, 2],
+      goalCenter: [5, 4],
+      assisted: true,
     },
     {
       order: 2,

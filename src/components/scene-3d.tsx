@@ -2,30 +2,24 @@
 
 import {
   PerspectiveCamera,
-  GizmoHelper,
-  GizmoViewport,
   OrbitControls,
   Text,
   Billboard,
 } from "@react-three/drei";
 import Cube from "./cube";
+import { useState } from "react";
 import { TCube } from "@/store/scene3DStore";
 
 interface Props {
   cubes: TCube[];
   cameraPosition?: [number, number, number];
-  hideGizmo?: boolean;
 }
 
-export function Scene3D({ cubes, cameraPosition, hideGizmo }: Props) {
+export function Scene3D({ cubes, cameraPosition }: Props) {
+  const [isDraggingCube, setIsDraggingCube] = useState(false);
+
   return (
     <>
-      {!hideGizmo && (
-        <GizmoHelper>
-          <GizmoViewport />
-        </GizmoHelper>
-      )}
-
       {/* Floor Grid */}
       <gridHelper args={[16, 16]} position={[0, 0, 0]} />
 
@@ -78,11 +72,11 @@ export function Scene3D({ cubes, cameraPosition, hideGizmo }: Props) {
         makeDefault
         position={cameraPosition ?? [10, 10, 10]}
       />
-      <OrbitControls />
+      <OrbitControls enabled={!isDraggingCube} />
 
       {/* Example Mesh */}
       {cubes.map(cube => (
-        <Cube key={cube.id} cube={cube} />
+        <Cube key={cube.id} cube={cube} onDraggingChange={setIsDraggingCube} />
       ))}
 
       {/* Render a Billboard text for each position in each axis from -8 to 8*/}

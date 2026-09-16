@@ -26,11 +26,7 @@ export default function ObjectivePanel3D() {
       {isOpen && (
         <div className="w-full h-56">
           <Canvas>
-            <Scene3D
-              cubes={objectiveCubes}
-              cameraPosition={[4, 4, 4]}
-              hideGizmo
-            />
+            <Scene3D cubes={objectiveCubes} cameraPosition={[4, 4, 4]} />
           </Canvas>
         </div>
       )}

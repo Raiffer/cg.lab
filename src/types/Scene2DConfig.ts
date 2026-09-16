@@ -17,11 +17,13 @@ export type TVector = {
   id: string;
   tail: [number, number];
   tip: [number, number];
+  followPolygonId?: string;
   tailMovable?: boolean;
   tipMovable?: boolean;
   middleMovable?: boolean;
   color?: string;
   label?: string;
+  showValue?: boolean;
 };
 
 export type TPolygon = {
