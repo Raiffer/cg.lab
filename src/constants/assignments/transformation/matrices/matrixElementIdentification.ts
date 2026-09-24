@@ -24,12 +24,15 @@ import { shuffleArray } from "@/utils";
  *   1–4   fundamentos: matrizes 2x2 e retangulares pequenas, leitura direta
  *   5–8   matrizes 3x3, ida e volta entre valor <-> posição, ordem da matriz
  *   9–12  números negativos, diagonal principal, primeira manipulação da matriz
- *   13–16 matrizes 3x4/4x4, decimais, elemento simétrico e troca de posições
+ *   13–16 múltiplas posições de uma vez (2, depois 3), elemento simétrico e
+ *         troca de posições
  *
  * Tipos de resposta usados (todos sem plano cartesiano, `hideCanvas: true`):
  *   FILL_IN_THE_BLANK_WITH_OPTIONS        — múltipla escolha sobre a matriz
  *   FILL_IN_THE_BLANK_MATRIX             — o aluno digita direto nas células
- *   FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS — o aluno leva uma opção para a célula
+ *   FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS — o aluno leva opções para uma ou
+ *                                            mais células, na ordem em que
+ *                                            aparecem na matriz
  */
 
 const SUBSCRIPT_DIGITS = ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"];
@@ -573,23 +576,32 @@ function createSwapCells(
 }
 
 // ---------------------------------------------------------------------------
-// Kind 12 — o aluno LEVA uma opção para a célula: qual valor ocupa a_ij?
+// Kind 12 — o aluno LEVA valores para VÁRIAS células ao mesmo tempo. Clicar
+// numa opção sempre preenche a primeira lacuna encontrada ao varrer a matriz
+// (topo→baixo, esquerda→direita — a mesma varredura de um laço `for i, for
+// j`), então acertar exige localizar cada posição em A E clicar na ordem
+// certa, não só reconhecer um número.
 // ---------------------------------------------------------------------------
-function createPickValueIntoCell(
+function createPickValuesIntoCells(
   order: number,
   title: string,
   matrixA: Grid,
-  targetRow: number,
-  targetCol: number,
+  targets: Position[], // 1-indexadas; qualquer ordem — a função ordena por varredura
   distractorValues: number[]
 ): Assignment {
-  const r = targetRow - 1;
-  const c = targetCol - 1;
-  const targetValue = matrixA[r][c];
-  const el = notation(targetRow, targetCol);
+  const scanOrder = [...targets].sort(([r1, c1], [r2, c2]) =>
+    r1 !== r2 ? r1 - r2 : c1 - c2
+  );
+  const targetKeys = new Set(scanOrder.map(([r, c]) => `${r}-${c}`));
+  const targetValues = scanOrder.map(([r, c]) => matrixA[r - 1][c - 1]);
+  const notations = scanOrder.map(([r, c]) => notation(r, c)).join(", ");
 
   const options: Option[] = shuffleArray([
-    { id: "correct", displayValue: String(targetValue), value: targetValue },
+    ...targetValues.map((value, index) => ({
+      id: `correct-${index}`,
+      displayValue: String(value),
+      value,
+    })),
     ...distractorValues.map((value, index) => ({
       id: `distractor-${index}`,
       displayValue: String(value),
@@ -599,25 +611,34 @@ function createPickValueIntoCell(
 
   return {
     ...baseAssignment(order, title),
-    instructions: `Observe a matriz A. Selecione, entre as opções, o valor que ocupa a posição ${el} (linha ${targetRow}, coluna ${targetCol}) e leve-o para a célula em destaque.`,
+    instructions: `Preencha as posições ${notations} de A, na ordem em que aparecem (de cima para baixo, esquerda para direita).`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS,
     setup() {
       showMatrixA(matrixA);
       const { setMatrix, setOptions } =
         useFillInMatrixWithOptionsStore.getState();
       setMatrix({
-        id: "answer-slot",
+        id: "answer-grid",
         type: MatrixType.IDENTITY,
         dimention: "2D",
-        matrixValue: [[{ value: "", editable: true }]],
+        matrixValue: matrixA.map((row, i) =>
+          row.map((_, j) =>
+            targetKeys.has(`${i + 1}-${j + 1}`)
+              ? { value: "", editable: true }
+              : { value: "·", editable: false }
+          )
+        ),
       });
       setOptions(options);
     },
     validate() {
       const { matrix, selectedOptions } =
         useFillInMatrixWithOptionsStore.getState();
-      if (!matrix || selectedOptions.length === 0) return false;
-      return Number(matrix.matrixValue[0][0].value) === targetValue;
+      if (!matrix || selectedOptions.length < scanOrder.length) return false;
+      return scanOrder.every(([row, col], index) => {
+        const cell = matrix.matrixValue[row - 1][col - 1];
+        return Number(cell.value) === targetValues[index];
+      });
     },
   };
 }
@@ -726,23 +747,36 @@ export const matrixElementIdentificationAssignmentList: Assignment[] = [
     0
   ),
 
-  // Nível 4 — 3x4 / 4x4, decimais, elemento simétrico e troca de posições
-  createValueAtNotation(13, "Valor de um elemento (3×4, decimais)", [
-    [1.5, -2, 4, 0],
-    [3, 0.5, -7, 2],
-    [-4.5, 6, 2, -1],
-  ], 3, 4),
-  createPickValueIntoCell(
+  // Nível 4 — múltiplas posições de uma vez (2, depois 3), elemento simétrico
+  // e troca de posições
+  createPickValuesIntoCells(
+    13,
+    "Preencha 2 posições em ordem",
+    [
+      [4, 8, 1],
+      [6, 2, 9],
+      [3, 7, 5],
+    ],
+    [
+      [1, 3],
+      [3, 1],
+    ],
+    [8]
+  ),
+  createPickValuesIntoCells(
     14,
-    "Selecione o valor da posição",
+    "Preencha 3 posições em ordem",
     [
       [2, 7, 1, 5],
       [9, 3, 8, 4],
       [6, 0, 2, 7],
     ],
-    2,
-    3,
-    [9, 3, 1]
+    [
+      [1, 4],
+      [2, 2],
+      [3, 3],
+    ],
+    [9, 1]
   ),
   createSymmetricValue(
     15,

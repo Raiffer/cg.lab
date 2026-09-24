@@ -192,6 +192,7 @@ export default function SpecificAssignmentPage({
 
       {/* Assignment interface container */}
       <div
+        id="assignment-panel"
         className={`absolute overflow-hidden transition-[max-height,width,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           hideCanvas
             ? "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 md:w-[560px] rounded-xl bg-white border border-gray-200 shadow-xl"
@@ -251,6 +252,7 @@ export default function SpecificAssignmentPage({
                 isLastAssignment={isLastAssignmentInSubject}
                 onTryAgain={handleTryAgain}
                 onNext={handleNext}
+                feedback={assignment.feedback}
               />
             )}
           </div>

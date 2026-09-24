@@ -1,3 +1,4 @@
+import { determinantVolumePrediction3DAssignmentList } from "./determinantVolumePrediction3D";
 import { rotationMatrixFillInput3DAssignmentList } from "./rotationMatrixFillInput3D";
 import { rotationMatrixFillWithOptions3DAssignmentList } from "./rotationMatrixFillWithOptions3D";
 import { scaleMatrixFillInput3DAssignmentList } from "./scaleMatrixFillInput3D";
@@ -8,4 +9,5 @@ export const matrices3dAssignments = [
   ...scaleMatrixFillInput3DAssignmentList,
   ...rotationMatrixFillInput3DAssignmentList,
   ...rotationMatrixFillWithOptions3DAssignmentList,
+  ...determinantVolumePrediction3DAssignmentList,
 ];

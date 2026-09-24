@@ -22,6 +22,24 @@ export type TVector = {
   middleMovable?: boolean;
   color?: string;
   label?: string;
+  /** Where the label sits relative to the vector. Defaults to "middle"
+   * (existing behavior everywhere) — "tip" places it right next to the
+   * arrowhead, for exercises where distinguishing which vector is which
+   * matters more than reading its magnitude at a glance. */
+  labelPosition?: "middle" | "tip";
+};
+
+/** A curved arrow showing the rotation from one direction to another
+ * (e.g. "turning L1 until it lines up with L2") — the arc always sweeps
+ * the SHORT way between the two angles, in the given direction. */
+export type TArc = {
+  id: string;
+  center: [number, number];
+  radius: number;
+  fromAngle: number; // degrees
+  toAngle: number; // degrees
+  direction: "clockwise" | "counterclockwise";
+  color?: string;
 };
 
 export type TPolygon = {
@@ -62,4 +80,5 @@ export type Scene2DConfig = {
   polygons?: TPolygon[];
   objectivePolygons?: TPolygon[];
   annotations?: Annotation[];
+  arcs?: TArc[];
 };

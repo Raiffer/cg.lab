@@ -310,6 +310,11 @@ export default function FillInMatrixInput({ matrix }: Props) {
           </div>
         ))}
       </div>
+      {matrix.liveStatLabel && (
+        <div className="text-center text-xs text-gray-600 mt-2 whitespace-pre-line">
+          {matrix.liveStatLabel(matrix.matrixValue)}
+        </div>
+      )}
     </div>
   );
 }

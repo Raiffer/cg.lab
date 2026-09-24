@@ -30,13 +30,47 @@ async function saveAttemptToSheets(data: {
   }
 }
 
+/**
+ * `crypto.randomUUID()` only exists in secure contexts (HTTPS or
+ * `localhost`) — opening the dev server through a LAN IP (e.g.
+ * `192.168.x.x:3000`) makes it disappear even though the rest of `crypto`
+ * still works, throwing "crypto.randomUUID is not a function". This falls
+ * back to `crypto.getRandomValues`, and finally to `Math.random()` — this id
+ * only groups anonymous attempt analytics, nothing security-sensitive.
+ */
+function generateUUID(): string {
+  if (typeof crypto?.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  if (typeof crypto?.getRandomValues === "function") {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+    bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant 10
+    const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, "0"));
+    return [
+      hex.slice(0, 4).join(""),
+      hex.slice(4, 6).join(""),
+      hex.slice(6, 8).join(""),
+      hex.slice(8, 10).join(""),
+      hex.slice(10, 16).join(""),
+    ].join("-");
+  }
+
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, char => {
+    const random = (Math.random() * 16) | 0;
+    const value = char === "x" ? random : (random & 0x3) | 0x8;
+    return value.toString(16);
+  });
+}
+
 const getOrCreateSessionId = () => {
   if (typeof window === "undefined") {
     return "server-session-id"; // Fallback for server-side rendering
   }
   let sessionId = localStorage.getItem("sessionId");
   if (!sessionId) {
-    sessionId = crypto.randomUUID();
+    sessionId = generateUUID();
     localStorage.setItem("sessionId", sessionId);
   }
   return sessionId;

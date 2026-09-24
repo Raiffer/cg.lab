@@ -5,11 +5,19 @@ import Lottie from "lottie-react";
 import successAnimationData from "@/assets/success-anim.json";
 import failAnimationData from "@/assets/fail-anim.json";
 
+type FeedbackText = string | (() => string);
+
 interface Props {
   state: "correct" | "incorrect" | "notAnswered";
   isLastAssignment: boolean;
   onTryAgain: () => void;
   onNext: () => void;
+  feedback?: { correct?: FeedbackText; incorrect?: FeedbackText };
+}
+
+function resolveFeedback(text: FeedbackText | undefined): string | undefined {
+  if (typeof text === "function") return text();
+  return text;
 }
 
 export default function AssignmentResult({
@@ -17,8 +25,12 @@ export default function AssignmentResult({
   isLastAssignment,
   onTryAgain,
   onNext,
+  feedback,
 }: Props) {
   if (state === "notAnswered") return null;
+
+  const correctFeedback = resolveFeedback(feedback?.correct);
+  const incorrectFeedback = resolveFeedback(feedback?.incorrect);
 
   return (
     <>
@@ -32,6 +44,11 @@ export default function AssignmentResult({
             />
             <p className="text-base md:text-xl">Parabéns! Você acertou.</p>
           </div>
+          {correctFeedback && (
+            <p className="text-sm text-gray-600 mt-2 px-4">
+              {correctFeedback}
+            </p>
+          )}
           <div className="flex items-center justify-center gap-4 mt-4">
             {isLastAssignment ? (
               <Button onClick={onNext}>
@@ -57,6 +74,11 @@ export default function AssignmentResult({
               Resposta incorreta. Tente novamente.
             </p>
           </div>
+          {incorrectFeedback && (
+            <p className="text-sm text-gray-600 mt-2 px-4">
+              {incorrectFeedback}
+            </p>
+          )}
           <div className="flex items-center justify-center gap-4 mt-4">
             <Button onClick={onTryAgain}>Tentar novamente</Button>
           </div>

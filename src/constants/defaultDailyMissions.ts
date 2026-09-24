@@ -8,7 +8,8 @@ export type SubjectCategories =
   | "rotation"
   | "scaling"
   | "multiplication"
-  | "matrix-fundamentals";
+  | "matrix-fundamentals"
+  | "determinants";
 
 export type DailyMission = {
   id: string;
@@ -71,5 +72,11 @@ export const defaultDailyMissions: DailyMission[] = [
     title: "Complete 5 exercícios sobre Fundamentos de matrizes",
     target: 5,
     subjectCategory: "matrix-fundamentals",
+  },
+  {
+    id: "complete-5-exercises-on-determinants",
+    title: "Complete 5 exercícios sobre Determinantes",
+    target: 5,
+    subjectCategory: "determinants",
   },
 ];

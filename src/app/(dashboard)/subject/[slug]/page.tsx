@@ -64,6 +64,7 @@ export default function SubjectPage({
     scaling: "Escala",
     multiplication: "Multiplicação",
     "matrix-fundamentals": "Fundamentos de matrizes",
+    determinants: "Determinantes",
   };
 
   return (

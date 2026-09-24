@@ -6,6 +6,7 @@ import CustomPoint from "./custom-point";
 import VectorWithControls from "./vector-with-controls";
 import { Scene2DConfig } from "@/types/Scene2DConfig";
 import CustomPolygon from "./custom-polygon";
+import CustomArc from "./custom-arc";
 import { useEffect } from "react";
 import { useScene2DStore } from "@/store/scene2DStore";
 
@@ -40,6 +41,10 @@ export default function GenericScene2D({ config }: { config: Scene2DConfig }) {
 
       {config.vectors?.map(vector => (
         <VectorWithControls key={vector.id} vector={vector} />
+      ))}
+
+      {config.arcs?.map(arc => (
+        <CustomArc key={arc.id} arc={arc} />
       ))}
 
       {config.points?.map(point => {

@@ -82,8 +82,7 @@ const subjects: Subject[] = [
   },
   {
     title: "Fundamentos de Matrizes",
-    description:
-      "Aprenda a ler índices, somar, subtrair e verificar propriedades básicas de matrizes.",
+    description: "Aprenda a ler índices, somar e subtrair matrizes.",
     slug: "matrix-fundamentals",
     assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "matrix-fundamentals"
@@ -123,6 +122,16 @@ const subjects: Subject[] = [
     slug: "multiplication",
     assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "multiplication"
+    ),
+    type: "2D",
+  },
+  {
+    title: "Determinantes",
+    description:
+      "Aprenda a calcular e a enxergar o determinante como área/volume.",
+    slug: "determinants",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "determinants"
     ),
     type: "2D",
   },

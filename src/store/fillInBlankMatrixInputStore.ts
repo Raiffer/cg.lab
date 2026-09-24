@@ -26,6 +26,12 @@ export interface Matrix {
   /** Optional heading shown above the grid (e.g. "A", "B", "C = A + B") — used when
    * more than one matrix is displayed at once and they need to be told apart. */
   label?: string;
+  /** Optional small text block shown below the grid, recomputed from the
+   * current (possibly partial/invalid) cell values on every render — for
+   * exercises that want to surface a live-updating derived quantity (e.g.
+   * the area/determinant as the student types) instead of making them wait
+   * for "Confirmar". Use "\n" for line breaks. */
+  liveStatLabel?: (matrixValue: MatrixValue[][]) => string;
 }
 
 interface FillBlankMatrixInputStore {

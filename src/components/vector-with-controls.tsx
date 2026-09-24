@@ -30,6 +30,8 @@ export default function VectorWithControls({ vector }: { vector: TVector }) {
     (vector.tail[1] + vector.tip[1]) / 2,
   ];
 
+  const labelAt = vector.labelPosition === "tip" ? vector.tip : middle;
+
   const translate: [number, number] =
     length > 0 && Number.isFinite(length)
       ? [(-dy / length) * 0.5, (dx / length) * 0.5]
@@ -46,7 +48,7 @@ export default function VectorWithControls({ vector }: { vector: TVector }) {
 
       {vector.label && (
         <Transform translate={translate}>
-          <LaTeX at={middle} tex={vector.label} />
+          <LaTeX at={labelAt} tex={vector.label} />
         </Transform>
       )}
 
