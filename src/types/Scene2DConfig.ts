@@ -17,6 +17,7 @@ export type TVector = {
   id: string;
   tail: [number, number];
   tip: [number, number];
+  followPolygonId?: string;
   tailMovable?: boolean;
   tipMovable?: boolean;
   middleMovable?: boolean;
@@ -27,6 +28,7 @@ export type TVector = {
    * arrowhead, for exercises where distinguishing which vector is which
    * matters more than reading its magnitude at a glance. */
   labelPosition?: "middle" | "tip";
+  showValue?: boolean;
 };
 
 /** A curved arrow showing the rotation from one direction to another

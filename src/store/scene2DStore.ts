@@ -203,6 +203,17 @@ export const useScene2DStore = create<Scene2DStore>((set, get) => ({
               }
             : polygon
         ),
+        vectors: state.config.vectors?.map(vector =>
+          vector.followPolygonId === polygonId
+            ? {
+                ...vector,
+                tip: [vector.tip[0] + delta[0], vector.tip[1] + delta[1]] as [
+                  number,
+                  number,
+                ],
+              }
+            : vector
+        ),
       },
     }));
   },

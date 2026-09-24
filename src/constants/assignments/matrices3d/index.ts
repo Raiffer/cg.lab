@@ -3,9 +3,13 @@ import { rotationMatrixFillInput3DAssignmentList } from "./rotationMatrixFillInp
 import { rotationMatrixFillWithOptions3DAssignmentList } from "./rotationMatrixFillWithOptions3D";
 import { scaleMatrixFillInput3DAssignmentList } from "./scaleMatrixFillInput3D";
 import { translationMatrixFillInput3DAssignmentList } from "./translationMatrixFillInput3D";
+import { translationMoveCubeAssignmentList } from "./translationMoveCube";
+import { scaleMoveCubeAssignmentList } from "./scaleMoveCube";
 
 export const matrices3dAssignments = [
+  ...translationMoveCubeAssignmentList,
   ...translationMatrixFillInput3DAssignmentList,
+  ...scaleMoveCubeAssignmentList,
   ...scaleMatrixFillInput3DAssignmentList,
   ...rotationMatrixFillInput3DAssignmentList,
   ...rotationMatrixFillWithOptions3DAssignmentList,

@@ -183,7 +183,7 @@ export default function SpecificAssignmentPage({
       ) : (
         <>
           <GenericScene3D />
-          <ObjectivePanel3D />
+          {assignment.showObjective !== false && <ObjectivePanel3D />}
         </>
       )}
 

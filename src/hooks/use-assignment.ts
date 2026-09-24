@@ -103,6 +103,11 @@ export function useAssignment(subject?: string) {
       const isCorrect = assignment.validate();
       setAssignmentState(isCorrect ? "correct" : "incorrect");
 
+      if (!isCorrect) {
+        assignment.onError?.();
+        setAssignment({ ...assignment });
+      }
+
       const endTime = Date.now();
       const timeSpent = endTime - (startTime ?? endTime);
 

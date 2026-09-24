@@ -118,7 +118,7 @@ const subjects: Subject[] = [
   },
   {
     title: "Multiplicação de Matrizes",
-    description: "Aprenda a multiplicar matrizes 2D.",
+    description: "Aprenda a fundir transformações 2D em uma única matriz de transformação.",
     slug: "multiplication",
     assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "multiplication"
@@ -136,11 +136,43 @@ const subjects: Subject[] = [
     type: "2D",
   },
   {
-    title: "Matrizes 3D",
+    title: "Translação 3D",
     description:
-      "Aprenda os conceitos básicos de matrizes aplicadas em objetos 3D.",
-    slug: "matrices3d",
-    assignments: matrices3dAssignments,
+      "Aprenda os conceitos básicos de translações aplicadas em objetos 3D.",
+    slug: "translation3d",
+    assignments: matrices3dAssignments.filter(
+      assi => assi.subjectCategory === "translation"
+    ),
+    type: "3D",
+  },
+  {
+    title: "Escala 3D",
+    description:
+      "Aprenda os conceitos básicos de escalas aplicadas em objetos 3D.",
+    slug: "scaling3d",
+    assignments: matrices3dAssignments.filter(
+      assi => assi.subjectCategory === "scaling"
+    ),
+    type: "3D",
+  },
+  {
+    title: "Rotação 3D",
+    description:
+      "Aprenda os conceitos básicos de rotações aplicadas em objetos 3D.",
+    slug: "rotation3d",
+    assignments: matrices3dAssignments.filter(
+      assi => assi.subjectCategory === "rotation"
+    ),
+    type: "3D",
+  },
+  {
+    title: "Determinantes 3D",
+    description:
+      "Aprenda a enxergar o determinante como volume de um paralelepípedo.",
+    slug: "determinants3d",
+    assignments: matrices3dAssignments.filter(
+      assi => assi.subjectCategory === "determinants"
+    ),
     type: "3D",
   },
 ];
