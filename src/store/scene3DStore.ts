@@ -33,9 +33,32 @@ export type TMovableCube = TCube & {
   };
 };
 
+/** A plane ax + by + cz = d, rendered as a large flat quad oriented by its
+ * normal vector (a, b, c) — the 3D equivalent of TLine, for showing a linear
+ * equation in 3 variables as what it actually is geometrically. */
+export type TPlane = {
+  id: string;
+  a: number;
+  b: number;
+  c: number;
+  d: number;
+  color: string;
+  opacity?: number;
+  label?: string;
+  /** Where to place the label in 3D space. Defaults to the plane's closest
+   * point to the origin — pass this explicitly when multiple planes share
+   * that point (e.g. all passing through the origin) so labels don't stack
+   * on top of each other. */
+  labelPosition?: [number, number, number];
+};
+
 interface Scene3DStore {
   cubes: TCube[];
   objectiveCubes: TCube[];
+  planes: TPlane[];
+  /** Overrides the default [10, 10, 10] camera position — for exercises
+   * whose geometry looks edge-on / hard to read from the default angle. */
+  cameraPosition: [number, number, number] | null;
   addCube: (cube: TCube) => void;
   addObjectiveCube: (cube: TCube) => void;
   getCube: (id: string) => TCube | undefined;
@@ -47,12 +70,16 @@ interface Scene3DStore {
   setCubeCustomYRotationMatrix: (id: string, matrix: Matrix4 | null) => void;
   setCubeCustomXRotationMatrix: (id: string, matrix: Matrix4 | null) => void;
   setCubeCustomZRotationMatrix: (id: string, matrix: Matrix4 | null) => void;
+  setPlanes: (planes: TPlane[]) => void;
+  setCameraPosition: (position: [number, number, number] | null) => void;
   reset: () => void;
 }
 
 const initialState = {
   cubes: [],
   objectiveCubes: [],
+  planes: [],
+  cameraPosition: null,
 };
 
 export const useScene3DStore = create<Scene3DStore>((set, get) => ({
@@ -179,6 +206,12 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
         cubes: newCubes,
       };
     });
+  },
+  setPlanes: planes => {
+    set(state => ({ ...state, planes }));
+  },
+  setCameraPosition: cameraPosition => {
+    set(state => ({ ...state, cameraPosition }));
   },
   reset: () => {
     set(initialState);

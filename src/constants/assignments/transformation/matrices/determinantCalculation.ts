@@ -16,25 +16,28 @@ import { shuffleArray } from "@/utils";
  * trabalhada nos outros arquivos deste módulo (determinantSignPrediction,
  * determinantAreaTarget) — aqui o foco é só a mecânica algébrica em si.
  *
- * Progressão de dificuldade — o salto de "matriz 2x2" direto para "expansão
- * em cofatores 3x3 do zero" é grande demais para uma questão só (a fórmula
- * de 3x3 tem 3 termos e 6 multiplicações, contra 1 termo e 2 multiplicações
- * da 2x2), então o meio do caminho foi dividido em dois degraus:
+ * A versão anterior deste arquivo pedia a expansão em cofatores 3×3
+ * completa (3 termos, 6 multiplicações) de cabeça, em 3 questões seguidas
+ * (#6–8) — pesado demais pra uma plataforma pensada pra ser respondida sem
+ * lápis e papel, só escolhendo entre alternativas. Em vez de simplesmente
+ * diminuir os números, a mudança é de ABORDAGEM: para 3×3, o conteúdo
+ * agora ensina a RECONHECER estrutura que já revela det(A) = 0 sem nenhuma
+ * conta — o mesmo raciocínio usado em matrixSingularityPrediction.ts e
+ * determinantInverseConnection.ts, generalizado com mais casos e sem apoio
+ * visual desta vez. A conta manual "de verdade" (Regra de Sarrus completa)
+ * fica para uma futura questão interativa de arrastar termos, pensada para
+ * a mecânica de cálculo em si, não para múltipla escolha.
+ *
+ * Progressão de dificuldade:
  *   1–4  matriz 2x2, fórmula ad − bc. Distratores reproduzem os dois erros
  *        mais comuns: esquecer o sinal (ad + bc) e inverter a ordem da
  *        subtração (bc − ad).
  *   5    matriz 3x3 TRIANGULAR (zeros abaixo da diagonal): det = a·e·i, o
- *        produto da diagonal — introduz o tamanho 3x3 sem introduzir a
- *        fórmula de cofatores ainda. Distrator principal: somar a diagonal
- *        em vez de multiplicar.
- *   6    matriz 3x3 qualquer, mas os três "recortes" 2x2 (M₁, M₂, M₃) já vêm
- *        calculados no enunciado — o aluno só precisa combinar
- *        a·M₁ − b·M₂ + c·M₃. Isola a parte "montar a fórmula" da parte
- *        "calcular os recortes", que só se juntam na questão seguinte.
- *   7–8  matriz 3x3 qualquer, expansão em cofatores completa, do zero —
- *        agora com as duas peças (tamanho 3x3, e a fórmula de combinação)
- *        já praticadas separadamente. Distrator principal: somar só a
- *        diagonal principal, ignorando os outros cinco termos.
+ *        produto da diagonal — introduz o tamanho 3x3 com a conta mais
+ *        simples possível (só multiplicar 3 números).
+ *   6–8  três estruturas que garantem det(A) = 0 SEM calcular nada: linha
+ *        de zeros, linhas proporcionais, colunas proporcionais — o aluno
+ *        aprende a "ler" a matriz em vez de expandir cofatores.
  */
 
 type Grid2 = [[number, number], [number, number]];
@@ -168,56 +171,28 @@ function create3x3TriangularAssignment(
   };
 }
 
-/** Degrau 2 do 3x3: os três recortes 2x2 (M₁, M₂, M₃) já vêm calculados no
- * enunciado — o aluno só precisa montar a·M₁ − b·M₂ + c·M₃. Isola a parte
- * "combinar com o sinal e o coeficiente certos" da parte "calcular cada
- * recorte", que só se juntam na questão seguinte (create3x3Assignment). */
-function create3x3GuidedAssignment(
+/** Degraus 2–4 do 3x3: nenhuma conta — só reconhecer uma estrutura que
+ * garante det(A) = 0 (linha/coluna de zeros, ou duas linhas/colunas
+ * proporcionais). `correct` ainda é calculado de verdade via det3(m) (nunca
+ * assumido como 0 só porque a instância "deveria" dar zero) — é uma
+ * checagem de segurança contra erro de digitação na matriz de exemplo.
+ * `hint` nomeia a estrutura no próprio enunciado, para o aluno aprender a
+ * procurar por ela, não decorar a resposta certa. */
+function create3x3RecognizeZeroAssignment(
   order: number,
   title: string,
-  m: Grid3
+  m: Grid3,
+  hint: string
 ): Assignment {
-  const { a, b, c, M1, M2, M3, correct } = cofactorBreakdown(m);
-
-  const options = makeOptions(correct, [
-    a * M1 + b * M2 + c * M3, // esqueceu o sinal negativo do termo do meio
-    M1 + M2 + M3, // esqueceu de multiplicar pelos coeficientes a, b, c
-  ]);
-
-  return {
-    ...baseAssignment(order, title),
-    instructions:
-      `Os três recortes 2×2 de A já foram calculados: M₁ = ei − fh = ${M1}, ` +
-      `M₂ = di − fg = ${M2}, M₃ = dh − eg = ${M3}. Combine com os coeficientes ` +
-      `da primeira linha (a = ${a}, b = ${b}, c = ${c}): det(A) = a·M₁ − b·M₂ + c·M₃.`,
-    type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
-    setup() {
-      useFillBlankMatrixInputStore.getState().setMatrices([
-        readonlyDisplayMatrix(m),
-      ]);
-      const { setSentence, setOptions } =
-        useFillInTheBlankWithOptionsStore.getState();
-      setSentence("det(A) = {resposta}");
-      setOptions(options);
-    },
-    validate: validateOptions,
-  };
-}
-
-function create3x3Assignment(order: number, title: string, m: Grid3): Assignment {
   const correct = det3(m);
-  const diagonalOnly = m[0][0] * m[1][1] * m[2][2]; // ignora os outros 5 termos da expansão
+  const rowASum = m[0][0] + m[0][1] + m[0][2];
+  const rowCSum = m[2][0] + m[2][1] + m[2][2];
 
-  const options = makeOptions(correct, [
-    diagonalOnly,
-    -correct,
-  ]);
+  const options = makeOptions(correct, [rowASum, rowCSum]);
 
   return {
     ...baseAssignment(order, title),
-    instructions:
-      "Calcule o determinante de A pela expansão em cofatores na primeira linha: " +
-      "det(A) = a·(ei − fh) − b·(di − fg) + c·(dh − eg).",
+    instructions: `Sem calcular nada: ${hint} Qual é det(A)?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
@@ -258,21 +233,37 @@ export const determinantCalculationAssignmentList: Assignment[] = [
     [0, 4, 2],
     [0, 0, 5],
   ]),
-  // Nível 3, degrau 2 — 3x3 com os recortes já calculados, só combinar
-  create3x3GuidedAssignment(6, "Determinante 3×3 (montando a fórmula)", [
-    [2, 1, 1],
-    [3, 1, 2],
-    [1, 4, 0],
-  ]),
-  // Nível 3, degrau 3 — 3x3 do zero, expansão em cofatores completa
-  create3x3Assignment(7, "Determinante 3×3", [
-    [1, 2, 0],
-    [0, 1, 3],
-    [2, 0, 1],
-  ]),
-  create3x3Assignment(8, "Determinante 3×3 com negativos", [
-    [2, -1, 0],
-    [1, 3, -2],
-    [0, 1, 1],
-  ]),
+  // Nível 3, degrau 2 — linha inteira de zeros
+  create3x3RecognizeZeroAssignment(
+    6,
+    "Determinante 3×3 (linha de zeros)",
+    [
+      [2, 5, -1],
+      [0, 0, 0],
+      [4, 1, 3],
+    ],
+    "uma linha inteira de A é zero (linha 2)."
+  ),
+  // Nível 3, degrau 3 — duas linhas proporcionais
+  create3x3RecognizeZeroAssignment(
+    7,
+    "Determinante 3×3 (linhas proporcionais)",
+    [
+      [1, 2, 3],
+      [2, 4, 6],
+      [0, 1, 4],
+    ],
+    "a linha 2 é o dobro da linha 1 (linhas proporcionais)."
+  ),
+  // Nível 3, degrau 4 — duas colunas proporcionais (generaliza pra colunas)
+  create3x3RecognizeZeroAssignment(
+    8,
+    "Determinante 3×3 (colunas proporcionais)",
+    [
+      [1, 5, 2],
+      [3, 1, 6],
+      [0, 4, 0],
+    ],
+    "a coluna 3 é o dobro da coluna 1 (colunas proporcionais)."
+  ),
 ];

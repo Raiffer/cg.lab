@@ -65,6 +65,7 @@ export default function SubjectPage({
     multiplication: "Multiplicação",
     "matrix-fundamentals": "Fundamentos de matrizes",
     determinants: "Determinantes",
+    "linear-systems": "Sistemas lineares",
   };
 
   return (

@@ -136,6 +136,16 @@ const subjects: Subject[] = [
     type: "2D",
   },
   {
+    title: "Sistemas Lineares",
+    description:
+      "Aprenda a classificar e resolver sistemas lineares por escalonamento.",
+    slug: "linear-systems",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "linear-systems"
+    ),
+    type: "2D",
+  },
+  {
     title: "Translação 3D",
     description:
       "Aprenda os conceitos básicos de translações aplicadas em objetos 3D.",
@@ -166,12 +176,12 @@ const subjects: Subject[] = [
     type: "3D",
   },
   {
-    title: "Determinantes 3D",
+    title: "Sistemas Lineares 3D",
     description:
-      "Aprenda a enxergar o determinante como volume de um paralelepípedo.",
-    slug: "determinants3d",
+      "Aprenda a classificar sistemas lineares de 3 variáveis enxergando os planos se encontrarem (ou não).",
+    slug: "linear-systems3d",
     assignments: matrices3dAssignments.filter(
-      assi => assi.subjectCategory === "determinants"
+      assi => assi.subjectCategory === "linear-systems"
     ),
     type: "3D",
   },

@@ -7,15 +7,17 @@ import {
   Billboard,
 } from "@react-three/drei";
 import Cube from "./cube";
+import CustomPlane3D from "./custom-plane-3d";
 import { useState } from "react";
-import { TCube } from "@/store/scene3DStore";
+import { TCube, TPlane } from "@/store/scene3DStore";
 
 interface Props {
   cubes: TCube[];
+  planes?: TPlane[];
   cameraPosition?: [number, number, number];
 }
 
-export function Scene3D({ cubes, cameraPosition }: Props) {
+export function Scene3D({ cubes, planes, cameraPosition }: Props) {
   const [isDraggingCube, setIsDraggingCube] = useState(false);
 
   return (
@@ -77,6 +79,10 @@ export function Scene3D({ cubes, cameraPosition }: Props) {
       {/* Example Mesh */}
       {cubes.map(cube => (
         <Cube key={cube.id} cube={cube} onDraggingChange={setIsDraggingCube} />
+      ))}
+
+      {planes?.map(plane => (
+        <CustomPlane3D key={plane.id} plane={plane} />
       ))}
 
       {/* Render a Billboard text for each position in each axis from -8 to 8*/}

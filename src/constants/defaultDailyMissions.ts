@@ -9,7 +9,8 @@ export type SubjectCategories =
   | "scaling"
   | "multiplication"
   | "matrix-fundamentals"
-  | "determinants";
+  | "determinants"
+  | "linear-systems";
 
 export type DailyMission = {
   id: string;
@@ -78,5 +79,11 @@ export const defaultDailyMissions: DailyMission[] = [
     title: "Complete 5 exercícios sobre Determinantes",
     target: 5,
     subjectCategory: "determinants",
+  },
+  {
+    id: "complete-5-exercises-on-linear-systems",
+    title: "Complete 5 exercícios sobre Sistemas Lineares",
+    target: 5,
+    subjectCategory: "linear-systems",
   },
 ];

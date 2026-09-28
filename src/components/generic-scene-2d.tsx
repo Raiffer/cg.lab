@@ -7,6 +7,7 @@ import VectorWithControls from "./vector-with-controls";
 import { Scene2DConfig } from "@/types/Scene2DConfig";
 import CustomPolygon from "./custom-polygon";
 import CustomArc from "./custom-arc";
+import CustomLine from "./custom-line";
 import { useEffect } from "react";
 import { useScene2DStore } from "@/store/scene2DStore";
 
@@ -34,6 +35,10 @@ export default function GenericScene2D({ config }: { config: Scene2DConfig }) {
   return (
     <Mafs pan={config.pan} viewBox={config.viewBox} height={windowSize.height}>
       <Coordinates.Cartesian subdivisions={config.grid.subdivisions} />
+
+      {config.lines?.map(line => (
+        <CustomLine key={line.id} line={line} />
+      ))}
 
       {config.polygons?.map(polygon => (
         <CustomPolygon key={polygon.id} polygon={polygon} />

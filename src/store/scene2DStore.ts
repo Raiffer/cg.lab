@@ -26,6 +26,7 @@ type Scene2DStore = {
   getObjectivePolygon: (id: string) => TPolygon | undefined;
   setAnnotations: (annotations: Scene2DConfig["annotations"]) => void;
   setArcs: (arcs: Scene2DConfig["arcs"]) => void;
+  setLines: (lines: Scene2DConfig["lines"]) => void;
   movePoint: (id: string, position: [number, number]) => void;
   movePolygonPoint: (
     polygonId: string,
@@ -159,6 +160,7 @@ export const useScene2DStore = create<Scene2DStore>((set, get) => ({
   setAnnotations: annotations =>
     set(state => ({ config: { ...state.config, annotations } })),
   setArcs: arcs => set(state => ({ config: { ...state.config, arcs } })),
+  setLines: lines => set(state => ({ config: { ...state.config, lines } })),
   movePoint: (id, position) =>
     set(state => ({
       config: {
