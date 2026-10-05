@@ -44,7 +44,9 @@ export default function Cube({ cube, onDraggingChange }: Props) {
     customZRotationMatrix,
     displayCustomAxes,
     interaction,
+    isCentral,
   } = cube;
+  const showPositionLabel = cube.isCentral ?? !cube.groupId;
   const [worldPosition, setWorldPosition] = useState<Vector3>(
     position.clone().add(translation)
   );
@@ -437,7 +439,7 @@ export default function Cube({ cube, onDraggingChange }: Props) {
         </Text>
       </Billboard>
 
-      {displayPosition && isMovableMode && (
+      {displayPosition && isMovableMode && showPositionLabel && (
         <Billboard
           follow
           renderOrder={1000}

@@ -22,6 +22,7 @@ import {
   Radical,
   Space,
   Variable,
+  Pen,
 } from "lucide-react";
 import Link from "next/link";
 import React, { use } from "react";
@@ -44,6 +45,7 @@ export default function SubjectPage({
 
   const assignmentTypeToIcon: Record<AssignmentType, React.ReactElement> = {
     INTERACTIVE: <Grab />,
+    SLIDER: <Pen />,
     FILL_IN_THE_BLANK_COORDINATES: <Puzzle />,
     FILL_IN_THE_BLANK_MATRIX: <LayoutGrid />,
     FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS: <MousePointerSquareDashedIcon />,

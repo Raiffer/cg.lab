@@ -10,6 +10,8 @@ export type CubeInteraction = {
 
 export type TCube = {
   id: string;
+  groupId?: string;
+  isCentral?: boolean;
   label?: string;
   position: Vector3;
   size: Vector3;
@@ -89,17 +91,23 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
       const cube = state.cubes.find(currentCube => currentCube.id === id);
       if (!cube) return state;
 
-      const nextTranslation = cube.translation.clone();
-      const nextX = Math.round((x - cube.position.x) * 2) / 2;
-      const nextZ = Math.round((z - cube.position.z) * 2) / 2;
-      nextTranslation.x = Math.max(-8, Math.min(8, nextX));
-      nextTranslation.z = Math.max(-8, Math.min(8, nextZ));
+      const nextX = Math.max(-8, Math.min(8, x));
+      const nextZ = Math.max(-8, Math.min(8, z));
+      const delta = new Vector3(
+        Math.round((nextX - cube.position.x - cube.translation.x) * 2) / 2,
+        0,
+        Math.round((nextZ - cube.position.z - cube.translation.z) * 2) / 2
+      );
+      const groupId = cube.groupId;
 
       return {
         ...state,
         cubes: state.cubes.map(currentCube =>
-          currentCube.id === id
-            ? { ...currentCube, translation: nextTranslation }
+          currentCube.id === id || (groupId && currentCube.groupId === groupId)
+            ? {
+                ...currentCube,
+                translation: currentCube.translation.clone().add(delta),
+              }
             : currentCube
         ),
       };
@@ -110,15 +118,25 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
       const cube = state.cubes.find(currentCube => currentCube.id === id);
       if (!cube) return state;
 
-      const nextTranslation = cube.translation.clone();
-      const nextY = Math.round((y - cube.position.y) * 2) / 2;
-      nextTranslation.y = Math.max(-7.5, Math.min(7.5, nextY));
+      const nextY = Math.max(-7.5, Math.min(7.5, y));
+      const deltaY =
+        Math.round((nextY - cube.position.y - cube.translation.y) * 2) / 2;
+      const groupId = cube.groupId;
 
       return {
         ...state,
         cubes: state.cubes.map(currentCube =>
-          currentCube.id === id
-            ? { ...currentCube, translation: nextTranslation }
+          currentCube.id === id || (groupId && currentCube.groupId === groupId)
+            ? {
+                ...currentCube,
+                translation: currentCube.translation
+                  .clone()
+                  .set(
+                    currentCube.translation.x,
+                    currentCube.translation.y + deltaY,
+                    currentCube.translation.z
+                  ),
+              }
             : currentCube
         ),
       };

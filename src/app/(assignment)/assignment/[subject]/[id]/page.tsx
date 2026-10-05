@@ -16,7 +16,6 @@ import { ChevronDown } from "lucide-react";
 import GenericScene2D from "@/components/generic-scene-2d";
 import GenericScene3D from "@/components/generic-scene-3d";
 import ObjectivePanel2D from "@/components/objective-panel-2d";
-import ObjectivePanel3D from "@/components/objective-panel-3d";
 import AssignmentNotAnswered from "@/components/assignment-not-answered";
 import AssignmentResult from "@/components/assignment-result";
 import SidePanel from "@/components/side-panel";
@@ -176,7 +175,6 @@ export default function SpecificAssignmentPage({
       ) : (
         <>
           <GenericScene3D />
-          {assignment.showObjective !== false && <ObjectivePanel3D />}
         </>
       )}
 
