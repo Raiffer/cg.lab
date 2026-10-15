@@ -1,5 +1,11 @@
 import { Matrix4, Vector3 } from "three";
 import { create } from "zustand";
+import {
+  createPerspectiveProjectionFromBounds,
+  createPerspectiveProjectionParameters,
+  getPerspectiveFrustumSize,
+  type PerspectiveProjectionParameters,
+} from "@/lib/perspective-projection";
 
 export type CubeInteractionMode = "none" | "move" | "scale";
 
@@ -10,6 +16,8 @@ export type CubeInteraction = {
 
 export type TCube = {
   id: string;
+  groupId?: string;
+  isCentral?: boolean;
   label?: string;
   position: Vector3;
   size: Vector3;
@@ -25,6 +33,20 @@ export type TCube = {
   displayCustomAxes?: boolean;
   interaction?: CubeInteraction;
 };
+
+export type TProjectionCube = {
+  id: string;
+  position: Vector3;
+  translation: Vector3;
+  size: Vector3;
+  perspectiveProjection?: PerspectiveProjectionParameters;
+  scale: Vector3;
+  color: string;
+};
+
+export type ProjectionMode = "parallel" | "perspective";
+
+export type TProjectionCubeState = Record<ProjectionMode, TProjectionCube[]>;
 
 export type TMovableCube = TCube & {
   interaction: {
@@ -59,13 +81,40 @@ interface Scene3DStore {
   /** Overrides the default [10, 10, 10] camera position — for exercises
    * whose geometry looks edge-on / hard to read from the default angle. */
   cameraPosition: [number, number, number] | null;
+  projectionCubes: TProjectionCubeState;
   addCube: (cube: TCube) => void;
   addObjectiveCube: (cube: TCube) => void;
+  addProjectionCube: (
+    mode: ProjectionMode,
+    cube: TProjectionCube
+  ) => void;
+  addPerspectiveCube: (
+    cube: Pick<TProjectionCube, "id" | "position" | "color">,
+    near: number,
+    far: number,
+    fovDegrees: number
+  ) => void;
+  addPerspectiveCubeFromBounds: (
+    cube: Pick<TProjectionCube, "id" | "position" | "color">,
+    near: number,
+    far: number,
+    left: number,
+    right: number,
+    bottom: number,
+    top: number
+  ) => void;
   getCube: (id: string) => TCube | undefined;
   updateCube: (id: string, cube: TCube) => void;
   moveCubeXZ: (id: string, x: number, z: number) => void;
   moveCubeY: (id: string, y: number) => void;
   scaleCubeUniform: (id: string, scale: number) => void;
+  resizeProjectionCube: (
+    mode: ProjectionMode,
+    id: string,
+    size: Vector3,
+    position: Vector3,
+    perspectiveProjection?: PerspectiveProjectionParameters
+  ) => void;
   setCubeInteractionMode: (id: string, mode: CubeInteractionMode) => void;
   setCubeCustomYRotationMatrix: (id: string, matrix: Matrix4 | null) => void;
   setCubeCustomXRotationMatrix: (id: string, matrix: Matrix4 | null) => void;
@@ -80,6 +129,10 @@ const initialState = {
   objectiveCubes: [],
   planes: [],
   cameraPosition: null,
+  projectionCubes: {
+    parallel: [],
+    perspective: [],
+  },
 };
 
 export const useScene3DStore = create<Scene3DStore>((set, get) => ({
@@ -94,6 +147,73 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
     set(state => ({
       ...state,
       objectiveCubes: [...state.objectiveCubes, cube],
+    }));
+  },
+  addProjectionCube: (mode, cube) => {
+    set(state => ({
+      ...state,
+      projectionCubes: {
+        ...state.projectionCubes,
+        [mode]: [...state.projectionCubes[mode], cube],
+      },
+    }));
+  },
+  addPerspectiveCube: (cube, near, far, fovDegrees) => {
+    const aspect =
+      Math.max(window.innerWidth, 1) / Math.max(window.innerHeight, 1);
+    const projection = createPerspectiveProjectionParameters(
+      near,
+      far,
+      fovDegrees,
+      aspect
+    );
+    const perspectiveCube: TProjectionCube = {
+      ...cube,
+      translation: new Vector3(0, 0, 0),
+      scale: new Vector3(1, 1, 1),
+      size: getPerspectiveFrustumSize(projection),
+      perspectiveProjection: projection,
+    };
+
+    set(state => ({
+      ...state,
+      projectionCubes: {
+        ...state.projectionCubes,
+        perspective: [...state.projectionCubes.perspective, perspectiveCube],
+      },
+    }));
+  },
+  addPerspectiveCubeFromBounds: (
+    cube,
+    near,
+    far,
+    left,
+    right,
+    bottom,
+    top
+  ) => {
+    const projection = createPerspectiveProjectionFromBounds(
+      near,
+      far,
+      left,
+      right,
+      bottom,
+      top
+    );
+    const perspectiveCube: TProjectionCube = {
+      ...cube,
+      translation: new Vector3(0, 0, 0),
+      scale: new Vector3(1, 1, 1),
+      size: getPerspectiveFrustumSize(projection),
+      perspectiveProjection: projection,
+    };
+
+    set(state => ({
+      ...state,
+      projectionCubes: {
+        ...state.projectionCubes,
+        perspective: [...state.projectionCubes.perspective, perspectiveCube],
+      },
     }));
   },
   getCube: id => {
@@ -116,17 +236,23 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
       const cube = state.cubes.find(currentCube => currentCube.id === id);
       if (!cube) return state;
 
-      const nextTranslation = cube.translation.clone();
-      const nextX = Math.round((x - cube.position.x) * 2) / 2;
-      const nextZ = Math.round((z - cube.position.z) * 2) / 2;
-      nextTranslation.x = Math.max(-8, Math.min(8, nextX));
-      nextTranslation.z = Math.max(-8, Math.min(8, nextZ));
+      const nextX = Math.max(-8, Math.min(8, x));
+      const nextZ = Math.max(-8, Math.min(8, z));
+      const delta = new Vector3(
+        Math.round((nextX - cube.position.x - cube.translation.x) * 2) / 2,
+        0,
+        Math.round((nextZ - cube.position.z - cube.translation.z) * 2) / 2
+      );
+      const groupId = cube.groupId;
 
       return {
         ...state,
         cubes: state.cubes.map(currentCube =>
-          currentCube.id === id
-            ? { ...currentCube, translation: nextTranslation }
+          currentCube.id === id || (groupId && currentCube.groupId === groupId)
+            ? {
+                ...currentCube,
+                translation: currentCube.translation.clone().add(delta),
+              }
             : currentCube
         ),
       };
@@ -137,15 +263,25 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
       const cube = state.cubes.find(currentCube => currentCube.id === id);
       if (!cube) return state;
 
-      const nextTranslation = cube.translation.clone();
-      const nextY = Math.round((y - cube.position.y) * 2) / 2;
-      nextTranslation.y = Math.max(-7.5, Math.min(7.5, nextY));
+      const nextY = Math.max(-7.5, Math.min(7.5, y));
+      const deltaY =
+        Math.round((nextY - cube.position.y - cube.translation.y) * 2) / 2;
+      const groupId = cube.groupId;
 
       return {
         ...state,
         cubes: state.cubes.map(currentCube =>
-          currentCube.id === id
-            ? { ...currentCube, translation: nextTranslation }
+          currentCube.id === id || (groupId && currentCube.groupId === groupId)
+            ? {
+                ...currentCube,
+                translation: currentCube.translation
+                  .clone()
+                  .set(
+                    currentCube.translation.x,
+                    currentCube.translation.y + deltaY,
+                    currentCube.translation.z
+                  ),
+              }
             : currentCube
         ),
       };
@@ -159,6 +295,29 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
           ? { ...cube, scale: new Vector3(scale, scale, scale) }
           : cube
       ),
+      objectiveCubes: state.objectiveCubes.map(cube =>
+        cube.id === id
+          ? { ...cube, scale: new Vector3(scale, scale, scale) }
+          : cube
+      ),
+    }));
+  },
+  resizeProjectionCube: (mode, id, size, position, perspectiveProjection) => {
+    set(state => ({
+      ...state,
+      projectionCubes: {
+        ...state.projectionCubes,
+        [mode]: state.projectionCubes[mode].map(cube =>
+          cube.id === id
+            ? {
+                ...cube,
+                size: size.clone(),
+                position: position.clone(),
+                ...(perspectiveProjection && { perspectiveProjection }),
+              }
+            : cube
+        ),
+      },
     }));
   },
   setCubeInteractionMode: (id, mode) => {

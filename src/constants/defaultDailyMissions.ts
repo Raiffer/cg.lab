@@ -10,7 +10,8 @@ export type SubjectCategories =
   | "multiplication"
   | "matrix-fundamentals"
   | "determinants"
-  | "linear-systems";
+  | "linear-systems"
+  | "projection";
 
 export type DailyMission = {
   id: string;

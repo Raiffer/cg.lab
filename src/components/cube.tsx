@@ -45,6 +45,7 @@ export default function Cube({ cube, onDraggingChange }: Props) {
     displayCustomAxes,
     interaction,
   } = cube;
+  const showPositionLabel = cube.isCentral ?? !cube.groupId;
   const [worldPosition, setWorldPosition] = useState<Vector3>(
     position.clone().add(translation)
   );
@@ -82,7 +83,13 @@ export default function Cube({ cube, onDraggingChange }: Props) {
       window.removeEventListener("keyup", handleKeyUp);
       window.removeEventListener("blur", handleWindowBlur);
     };
-  }, [cube.id, interaction, canSwitchMode, setCubeInteractionMode]);
+  }, [
+    cube.id,
+    interaction,
+    isMovableMode,
+    canSwitchMode,
+    setCubeInteractionMode,
+  ]);
 
   useLayoutEffect(() => {
     for (const textMesh of [labelRef.current, positionLabelRef.current]) {
@@ -188,8 +195,6 @@ export default function Cube({ cube, onDraggingChange }: Props) {
 
     const worldP = position.clone().add(translation);
     setWorldPosition(worldP);
-
-    // Create individual transformation matrices
     const translationMatrix = new Matrix4().makeTranslation(
       worldP.x,
       worldP.y,
@@ -437,7 +442,7 @@ export default function Cube({ cube, onDraggingChange }: Props) {
         </Text>
       </Billboard>
 
-      {displayPosition && isMovableMode && (
+      {displayPosition && isMovableMode && showPositionLabel && (
         <Billboard
           follow
           renderOrder={1000}

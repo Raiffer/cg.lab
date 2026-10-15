@@ -182,8 +182,24 @@ export default function SpecificAssignmentPage({
         </>
       ) : (
         <>
-          <GenericScene3D />
-          {assignment.showObjective !== false && <ObjectivePanel3D />}
+          <GenericScene3D
+            parallelProjection={
+              assignment.subjectCategory === "projection" &&
+              assignment.projectionMode === "parallel"
+            }
+            perspectiveProjection={
+              assignment.subjectCategory === "projection" &&
+              assignment.projectionMode === "perspective"
+            }
+            projectionMode={assignment.projectionMode}
+            extendNegativeZGrid={assignment.subjectCategory === "projection"}
+          />
+          <ObjectivePanel3D
+            minimalView={assignment.subjectCategory === "projection"}
+            mirrorMainScene={assignment.subjectCategory === "projection"}
+            projectionMode={assignment.projectionMode}
+            extendNegativeZGrid={assignment.subjectCategory === "projection"}
+          />
         </>
       )}
 
@@ -242,7 +258,7 @@ export default function SpecificAssignmentPage({
             {assignmentState === "notAnswered" ? (
               <AssignmentNotAnswered
                 assignment={assignment}
-                handleConfirm={handleConfirm}
+                handleConfirm={answers => handleConfirm({ answers })}
                 handlePrevious={handlePrevious}
                 handleNext={handleNext}
               />

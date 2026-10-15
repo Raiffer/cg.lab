@@ -8,6 +8,7 @@ import FillInMatrixWithOptions from "./fill-in-matrix-with-options";
 import FillInVecLengthFormula from "./fill-in-vec-length-formula";
 import OrderMatrixMultiplication from "./order-matrix-multiplication";
 import FillInTheBlankWithOptions from "./fill-in-the-blank-with-options";
+import SliderAssignment from "./slider-assignment";
 import { Button } from "./ui/button";
 import { useFillInTheBlankStore } from "@/store/fillInTheBlankStore";
 import { SkipForward } from "lucide-react";
@@ -43,6 +44,10 @@ export default function AssignmentNotAnsweredRandom({
 
       {assignment?.type === AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS && (
         <FillInTheBlankWithOptions />
+      )}
+
+      {assignment?.type === AssignmentType.SLIDER && assignment && (
+        <SliderAssignment assignment={assignment} />
       )}
 
       {matrices.map(matrix => (

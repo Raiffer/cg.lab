@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useMutation } from "convex/react";
 import { isSameDay } from "date-fns";
 import { toast } from "@/hooks/use-toast";
-import { Assignment } from "@/types/Assignment";
+import { Assignment, AssignmentAnswers } from "@/types/Assignment";
 import { api } from "../../convex/_generated/api";
 
 async function saveAttemptToSheets(data: {
@@ -97,10 +97,13 @@ export function useAssignment(subject?: string) {
   }, []);
 
   const handleConfirm = useCallback(
-    async ({ ignoreCompletionSave = false } = {}) => {
+    async ({
+      ignoreCompletionSave = false,
+      answers,
+    }: { ignoreCompletionSave?: boolean; answers?: AssignmentAnswers } = {}) => {
       if (!assignment) return;
 
-      const isCorrect = assignment.validate();
+      const isCorrect = assignment.validate(answers);
       setAssignmentState(isCorrect ? "correct" : "incorrect");
 
       if (!isCorrect) {
