@@ -53,7 +53,9 @@ function createMatrixSingularityPredictionAssignment({
     order,
     title: title || "Essa Matriz Tem Inversa?",
     instructions:
-      "As linhas de A formam o paralelogramo sombreado. Ele tem área, ou achatou numa linha?",
+      order === 1
+        ? "As linhas de A formam o paralelogramo sombreado. Ele tem área, ou achatou numa linha?"
+        : "Esse paralelogramo tem área, ou achatou numa linha?",
     assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "determinants",

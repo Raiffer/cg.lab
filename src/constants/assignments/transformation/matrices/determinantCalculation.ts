@@ -123,7 +123,10 @@ function create2x2Assignment(order: number, title: string, m: Grid2): Assignment
 
   return {
     ...baseAssignment(order, title),
-    instructions: `Calcule o determinante de A. det(A) = a·d − b·c.`,
+    instructions:
+      order === 1
+        ? `Calcule o determinante de A. det(A) = a·d − b·c.`
+        : `Calcule o determinante de A.`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([

@@ -141,7 +141,10 @@ function createSystemClassification3DAssignment({
     id: `system-classification-3d-${order}`,
     order,
     title: title || "Classifique o Sistema (3D)",
-    instructions: `Cada plano é uma equação do sistema { ${equationText(p1, ["x", "y", "z"])}; ${equationText(p2, ["x", "y", "z"])}; ${equationText(p3, ["x", "y", "z"])} }. Como você classifica esse sistema?`,
+    instructions:
+      order === 1
+        ? `Cada plano é uma equação do sistema { ${equationText(p1, ["x", "y", "z"])}; ${equationText(p2, ["x", "y", "z"])}; ${equationText(p3, ["x", "y", "z"])} }. Como você classifica esse sistema?`
+        : `Como você classifica o sistema { ${equationText(p1, ["x", "y", "z"])}; ${equationText(p2, ["x", "y", "z"])}; ${equationText(p3, ["x", "y", "z"])} }?`,
     assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "linear-systems",

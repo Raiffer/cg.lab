@@ -68,7 +68,9 @@ function create2x2Assignment(order: number, title: string, m: Grid2): Assignment
   return {
     ...baseAssignment(order, title),
     instructions:
-      "Uma matriz quadrada só tem inversa se det(A) ≠ 0. Calcule det(A): essa matriz possui inversa?",
+      order === 1
+        ? "Uma matriz quadrada só tem inversa se det(A) ≠ 0. Calcule det(A): essa matriz possui inversa?"
+        : "Calcule det(A): essa matriz possui inversa?",
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
@@ -91,13 +93,19 @@ function create2x2Assignment(order: number, title: string, m: Grid2): Assignment
   };
 }
 
-function create3x3Assignment(order: number, title: string, m: Grid3): Assignment {
+function create3x3Assignment(
+  order: number,
+  title: string,
+  m: Grid3,
+  isFirst3x3: boolean
+): Assignment {
   const hasInverse = det3(m) !== 0;
 
   return {
     ...baseAssignment(order, title),
-    instructions:
-      "Calcule det(A) pela expansão em cofatores na primeira linha (a=a₁₁, b=a₁₂, c=a₁₃): essa matriz possui inversa?",
+    instructions: isFirst3x3
+      ? "Calcule det(A) pela expansão em cofatores na primeira linha (a=a₁₁, b=a₁₂, c=a₁₃): essa matriz possui inversa?"
+      : "Calcule det(A): essa matriz possui inversa?",
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
@@ -137,15 +145,25 @@ export const determinantInverseConnectionAssignmentList: Assignment[] = [
     [0.5, 1.2],
   ]),
   // Nível 3 — 3x3, det não nulo
-  create3x3Assignment(4, "Tem Inversa? (3×3)", [
-    [1, 0, 2],
-    [2, 1, 0],
-    [0, 1, 1],
-  ]),
+  create3x3Assignment(
+    4,
+    "Tem Inversa? (3×3)",
+    [
+      [1, 0, 2],
+      [2, 1, 0],
+      [0, 1, 1],
+    ],
+    true
+  ),
   // Nível 3 — 3x3, linha de zeros, det = 0
-  create3x3Assignment(5, "Tem Inversa? (3×3, singular)", [
-    [1, 2, 3],
-    [0, 0, 0],
-    [4, 5, 6],
-  ]),
+  create3x3Assignment(
+    5,
+    "Tem Inversa? (3×3, singular)",
+    [
+      [1, 2, 3],
+      [0, 0, 0],
+      [4, 5, 6],
+    ],
+    false
+  ),
 ];

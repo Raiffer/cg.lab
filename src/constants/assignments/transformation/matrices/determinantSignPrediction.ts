@@ -142,7 +142,9 @@ function createRotationSenseAssignment({
     order,
     title: title || "Qual é o Sentido da Rotação?",
     instructions:
-      "Ao girar L1 até coincidir com L2 (pela curva mostrada), qual é o sentido da rotação?",
+      order === 1
+        ? "Ao girar L1 até coincidir com L2 (pela curva mostrada), qual é o sentido da rotação?"
+        : "Qual é o sentido da rotação de L1 para L2?",
     assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "determinants",

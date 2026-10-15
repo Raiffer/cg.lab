@@ -78,7 +78,7 @@ const baseAssignment = (order: number) => ({
   title: "Multiplicação por escalar",
   assisted: false,
   hideCanvas: true,
-  subjectCategory: "multiplication" as const,
+  subjectCategory: "matrix-fundamentals" as const,
 });
 
 /** Reads the selected multiple-choice option and trusts its `.correct` flag. */

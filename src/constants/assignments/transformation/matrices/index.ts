@@ -27,16 +27,23 @@ import { systemIntersectionReadAssignmentList } from "./systemIntersectionRead";
 import { translationMatrix2dAssignmentList } from "./translationMatrix";
 
 export const matricesAssignments = [
-  // Matrix Fundamentals Assignments (element reading, sum/subtraction gap —
-  // increasing difficulty)
+  // Matrix Fundamentals Assignments (element reading, sum/subtraction gap,
+  // then multiplication — scalar first, then matrix-matrix, then ordering
+  // the factors to compose transformations — increasing difficulty)
   ...matrixElementIdentificationAssignmentList,
   ...matrixSumSubtractionGapAssignmentList,
+  ...matrixScalarMultiplicationAssignmentList,
+  ...matrixMatrixMultiplicationAssignmentList,
+  ...orderingMatricesAssignments,
 
-  // Determinant Assignments (sign/area without calculating, calculation
-  // itself, row-swap/scalar properties, singularity, and the explicit bridge
-  // back to "does A have an inverse?" from Module 1 — increasing difficulty)
-  ...determinantSignPredictionAssignmentList,
+  // Determinant Assignments (the student hasn't seen a determinant before,
+  // so start with the actual calculation first — only once they know what a
+  // determinant IS does "predict the sign/rotation without calculating"
+  // make pedagogical sense; then area without calculating, row-swap/scalar
+  // properties, singularity, and the explicit bridge back to "does A have
+  // an inverse?" from Module 1 — increasing difficulty)
   ...determinantCalculationAssignmentList,
+  ...determinantSignPredictionAssignmentList,
   ...determinantAreaTargetAssignmentList,
   ...determinantRowSwapSignAssignmentList,
   ...determinantScalarRowPropertyAssignmentList,
@@ -69,10 +76,4 @@ export const matricesAssignments = [
   // Rotation Assignments
   ...rotationMatrixFillInWithOptionsAssignments,
   ...rotationMatrixFillInBlankAssignments,
-
-  // Matrix Multiplication Assignments (mechanics first, then applying it to
-  // compose transformations)
-  ...matrixScalarMultiplicationAssignmentList,
-  ...matrixMatrixMultiplicationAssignmentList,
-  ...orderingMatricesAssignments,
 ];

@@ -104,7 +104,10 @@ function createSystemClassificationAssignment({
     id: `system-classification-visual-${order}`,
     order,
     title: title || "Classifique o Sistema",
-    instructions: `Cada reta é uma equação do sistema { ${equationText(eq1, ["x", "y"])}; ${equationText(eq2, ["x", "y"])} }. Como você classifica esse sistema?`,
+    instructions:
+      order === 1
+        ? `Cada reta é uma equação do sistema { ${equationText(eq1, ["x", "y"])}; ${equationText(eq2, ["x", "y"])} }. Como você classifica esse sistema?`
+        : `Como você classifica o sistema { ${equationText(eq1, ["x", "y"])}; ${equationText(eq2, ["x", "y"])} }?`,
     assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "linear-systems",

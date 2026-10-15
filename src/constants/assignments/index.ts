@@ -82,7 +82,8 @@ const subjects: Subject[] = [
   },
   {
     title: "Fundamentos de Matrizes",
-    description: "Aprenda a ler índices, somar e subtrair matrizes.",
+    description:
+      "Aprenda a ler índices, somar, subtrair e multiplicar matrizes.",
     slug: "matrix-fundamentals",
     assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "matrix-fundamentals"
@@ -113,15 +114,6 @@ const subjects: Subject[] = [
     slug: "rotation",
     assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "rotation"
-    ),
-    type: "2D",
-  },
-  {
-    title: "Multiplicação de Matrizes",
-    description: "Aprenda a fundir transformações 2D em uma única matriz de transformação.",
-    slug: "multiplication",
-    assignments: transformationAssignments.filter(
-      assi => assi.subjectCategory === "multiplication"
     ),
     type: "2D",
   },

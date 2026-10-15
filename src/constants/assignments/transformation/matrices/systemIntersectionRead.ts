@@ -75,7 +75,9 @@ function createSystemIntersectionReadAssignment({
     order,
     title: title || "Leia a Interseção",
     instructions:
-      "As duas retas se cruzam em um único ponto: esse ponto é a solução do sistema. Leia suas coordenadas na grade.",
+      order === 1
+        ? "As duas retas se cruzam em um único ponto: esse ponto é a solução do sistema. Leia suas coordenadas na grade."
+        : "Leia as coordenadas do ponto onde as retas se cruzam.",
     assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_COORDINATES,
     subjectCategory: "linear-systems",
