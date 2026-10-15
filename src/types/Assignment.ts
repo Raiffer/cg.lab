@@ -27,6 +27,14 @@ export interface SliderAssignmentButton {
   selectable?: boolean;
 }
 
+export interface ProjectionClassificationQuestion {
+  id: string;
+  prompt: string;
+  isInsideVolume: boolean;
+}
+
+export type AssignmentAnswers = Record<string, boolean | undefined>;
+
 export type SliderAssignmentButtons =
   | []
   | [SliderAssignmentButton]
@@ -41,12 +49,14 @@ export interface Assignment {
   assisted: boolean;
   type: AssignmentType;
   subjectCategory: SubjectCategories;
+  projectionMode?: "parallel" | "perspective";
   setup: () => void;
-  validate: () => boolean;
   onError?: () => void;
   showObjective?: boolean;
   slider?: SliderConfig;
   buttons?: SliderAssignmentButtons;
+  projectionQuestions?: ProjectionClassificationQuestion[];
+  validate: (answers?: AssignmentAnswers) => boolean;
 }
 
 export interface RandomGeneratedAssignment extends Assignment {

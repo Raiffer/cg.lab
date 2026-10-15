@@ -16,6 +16,7 @@ import { ChevronDown } from "lucide-react";
 import GenericScene2D from "@/components/generic-scene-2d";
 import GenericScene3D from "@/components/generic-scene-3d";
 import ObjectivePanel2D from "@/components/objective-panel-2d";
+import ObjectivePanel3D from "@/components/objective-panel-3d";
 import AssignmentNotAnswered from "@/components/assignment-not-answered";
 import AssignmentResult from "@/components/assignment-result";
 import SidePanel from "@/components/side-panel";
@@ -174,7 +175,24 @@ export default function SpecificAssignmentPage({
         </>
       ) : (
         <>
-          <GenericScene3D />
+          <GenericScene3D
+            parallelProjection={
+              assignment.subjectCategory === "projection" &&
+              assignment.projectionMode === "parallel"
+            }
+            perspectiveProjection={
+              assignment.subjectCategory === "projection" &&
+              assignment.projectionMode === "perspective"
+            }
+            projectionMode={assignment.projectionMode}
+            extendNegativeZGrid={assignment.subjectCategory === "projection"}
+          />
+          <ObjectivePanel3D
+            minimalView={assignment.subjectCategory === "projection"}
+            mirrorMainScene={assignment.subjectCategory === "projection"}
+            projectionMode={assignment.projectionMode}
+            extendNegativeZGrid={assignment.subjectCategory === "projection"}
+          />
         </>
       )}
 
@@ -222,7 +240,7 @@ export default function SpecificAssignmentPage({
             {assignmentState === "notAnswered" ? (
               <AssignmentNotAnswered
                 assignment={assignment}
-                handleConfirm={handleConfirm}
+                handleConfirm={answers => handleConfirm({ answers })}
                 handlePrevious={handlePrevious}
                 handleNext={handleNext}
               />

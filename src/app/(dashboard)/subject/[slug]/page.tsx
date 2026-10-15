@@ -65,6 +65,7 @@ export default function SubjectPage({
     rotation: "Rotação",
     scaling: "Escala",
     multiplication: "Multiplicação",
+    projection: "Projeção",
   };
 
   return (

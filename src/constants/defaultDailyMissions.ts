@@ -7,7 +7,8 @@ export type SubjectCategories =
   | "translation"
   | "rotation"
   | "scaling"
-  | "multiplication";
+  | "multiplication"
+  | "projection";
 
 export type DailyMission = {
   id: string;

@@ -26,6 +26,7 @@ import {
   generate2DScaleMatrixAssignment,
   generate2DTranslationMatrixAssignment,
 } from "./generateRandom2DMatricesAssignment";
+import { projectionAssignments } from "./projection";
 
 export type Subject = {
   title: string;
@@ -109,7 +110,8 @@ const subjects: Subject[] = [
   },
   {
     title: "Multiplicação de Matrizes",
-    description: "Aprenda a fundir transformações 2D em uma única matriz de transformação.",
+    description:
+      "Aprenda a fundir transformações 2D em uma única matriz de transformação.",
     slug: "multiplication",
     assignments: transformationAssignments.filter(
       assi => assi.subjectCategory === "multiplication"
@@ -144,6 +146,13 @@ const subjects: Subject[] = [
     assignments: matrices3dAssignments.filter(
       assi => assi.subjectCategory === "rotation"
     ),
+    type: "3D",
+  },
+  {
+    title: "Projeção 3D",
+    description: "Placeholder para exercícios de projeção 3D.",
+    slug: "projection3d",
+    assignments: projectionAssignments,
     type: "3D",
   },
 ];
