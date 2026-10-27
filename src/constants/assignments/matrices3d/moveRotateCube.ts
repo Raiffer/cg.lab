@@ -44,6 +44,10 @@ const getRotationMatrix = (rot: Vector3) => {
 // A translação só é alcançável se estiver na grade de 0.5 usada pelo moveCubeXZ/moveCubeY
 const isOnHalfGrid = (n: number) => Math.abs(n * 2 - Math.round(n * 2)) < 1e-6;
 
+// Dica mostrada quando a questão exige mover o cubo no eixo Y
+const yAxisHint = (translation: Vector3) =>
+  translation.y !== 0 ? " Segure Shift para mover no eixo Y." : "";
+
 function createMoveRotateCubeAssignment({
   order,
   title,
@@ -169,7 +173,7 @@ function createMoveRotateCubeAssignment({
     title: title || "Mova e rotacione a peça no ambiente 3D",
     instructions:
       instructions ||
-      `Aplique a rotação (${targetRotation.x}, ${targetRotation.y}, ${targetRotation.z}) e a translação (${targetTranslation.x}, ${targetTranslation.y}, ${targetTranslation.z}).`,
+      `Aplique a rotação (${targetRotation.x}, ${targetRotation.y}, ${targetRotation.z}) e a translação (${targetTranslation.x}, ${targetTranslation.y}, ${targetTranslation.z}).${yAxisHint(targetTranslation)}`,
     order,
     type: AssignmentType.SLIDER,
     subjectCategory: "rotation",
@@ -325,6 +329,76 @@ const moveRotateCubeAssignmentProps: MoveRotateCubeProps[] = [
     targetRotation: new Vector3(0, 90, 0),
     // posição final derivada = R·(2, 0.5, 2) + (4, 0, -1) = (6, 0.5, -3)
     targetTranslation: new Vector3(4, 0, -1),
+    showGoal: true,
+    initialAxis: "Y",
+  },
+  {
+    order: 3,
+    title: "Meia volta no eixo Y",
+    // R·(2, 0.5, 2) = (-2, 0.5, -2); + t = (2, 0.5, -2)
+    pieceType: TetrisPiece3Type.L,
+    initialCubeProps: {
+      position: new Vector3(2, 0.5, 2),
+      color: "orange",
+    },
+    targetRotation: new Vector3(0, 180, 0),
+    targetTranslation: new Vector3(4, 0, 0),
+    showGoal: true,
+    initialAxis: "Y",
+  },
+  {
+    order: 4,
+    title: "Rotação negativa no eixo Y",
+    // R·(-0.5, 0.5, 3) = (-3, 0.5, -0.5); + t = (-3, 0.5, 2.5)
+    pieceType: TetrisPiece3Type.I,
+    initialCubeProps: {
+      position: new Vector3(0, 0.5, 3),
+      color: "cyan",
+    },
+    targetRotation: new Vector3(0, -90, 0),
+    targetTranslation: new Vector3(0, 0, 3),
+    showGoal: true,
+    initialAxis: "Y",
+  },
+  {
+    order: 5,
+    title: "Rotacione no eixo X e mova a peça",
+    // R·(0, 0.5, -2) = (0, 2, 0.5); + t = (2, 2, 2.5)
+    pieceType: TetrisPiece3Type.T,
+    initialCubeProps: {
+      position: new Vector3(0, 0.5, -2),
+      color: "purple",
+    },
+    targetRotation: new Vector3(90, 0, 0),
+    targetTranslation: new Vector3(2, 0, 2),
+    showGoal: true,
+    initialAxis: "X",
+  },
+  {
+    order: 6,
+    title: "Rotacione no eixo Z e mova a peça",
+    // R·(2.5, 0.5, 0) = (-0.5, 2.5, 0); + t = (2.5, 2.5, -2)
+    pieceType: TetrisPiece3Type.S,
+    initialCubeProps: {
+      position: new Vector3(2, 0.5, 0),
+      color: "green",
+    },
+    targetRotation: new Vector3(0, 0, 90),
+    targetTranslation: new Vector3(3, 0, -2),
+    showGoal: true,
+    initialAxis: "Z",
+  },
+  {
+    order: 7,
+    title: "Rotacione no eixo Y e suba a peça",
+    // R·(2.5, 0.5, 0.5) = (0.5, 0.5, -2.5); + t = (0.5, 2.5, -2.5)
+    pieceType: TetrisPiece3Type.O,
+    initialCubeProps: {
+      position: new Vector3(3, 0.5, 0),
+      color: "yellow",
+    },
+    targetRotation: new Vector3(0, 90, 0),
+    targetTranslation: new Vector3(0, 2, 0),
     showGoal: true,
     initialAxis: "Y",
   },

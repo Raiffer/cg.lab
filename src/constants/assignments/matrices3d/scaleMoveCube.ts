@@ -22,6 +22,10 @@ const cleanVector = (v: Vector3) => {
   return new Vector3(snap(v.x), snap(v.y), snap(v.z));
 };
 
+// Dica mostrada quando a questão exige mover o cubo no eixo Y
+const yAxisHint = (translation: Vector3) =>
+  translation.y !== 0 ? " Segure Shift para mover no eixo Y." : "";
+
 function createsScaleMoveCubeAssignment({
   order,
   title,
@@ -58,7 +62,7 @@ function createsScaleMoveCubeAssignment({
     title: title || "Escale o cubo no ambiente 3D",
     instructions:
       instructions ||
-      `Aplique a escala de ${targetScale.x} e a translação (${targetTranslation.x}, ${targetTranslation.y}, ${targetTranslation.z}) ao cubo.`,
+      `Aplique a escala de ${targetScale.x} e a translação (${targetTranslation.x}, ${targetTranslation.y}, ${targetTranslation.z}) ao cubo.${yAxisHint(targetTranslation)}`,
     order,
     type: AssignmentType.SLIDER,
     subjectCategory: "scaling",
@@ -188,6 +192,56 @@ const scaleMoveCubeAssignmentsProps: ScaleMoveCubeProps[] = [
     initialSize: new Vector3(1, 1, 1),
     targetTranslation: new Vector3(0, 0, 0),
     targetScale: new Vector3(3.5, 3.5, 3.5),
+    showGoal: true,
+  },
+  {
+    order: 6,
+    title: "Escala 1.5 e volta ao centro",
+    // S·p0 = (3, 0.75, 3); + t = (0, 0.75, 0)
+    initialPosition: new Vector3(2, 0.5, 2),
+    initialSize: new Vector3(1, 1, 1),
+    targetTranslation: new Vector3(-3, 0, -3),
+    targetScale: new Vector3(1.5, 1.5, 1.5),
+    showGoal: true,
+  },
+  {
+    order: 7,
+    title: "Aumentar a escala para 2.5",
+    // S·p0 = (-5, 1.25, 2.5); + t = (0, 1.25, -2.5)
+    initialPosition: new Vector3(-2, 0.5, 1),
+    initialSize: new Vector3(1, 1, 1),
+    targetTranslation: new Vector3(5, 0, -5),
+    targetScale: new Vector3(2.5, 2.5, 2.5),
+    showGoal: true,
+  },
+  {
+    order: 8,
+    title: "Reduzir a escala e subir o cubo",
+    // S·p0 = (2, 1, -2); + t = (2, 3, -2)
+    initialPosition: new Vector3(4, 2, -4),
+    initialSize: new Vector3(1, 1, 1),
+    targetTranslation: new Vector3(0, 2, 0),
+    targetScale: new Vector3(0.5, 0.5, 0.5),
+    showGoal: true,
+  },
+  {
+    order: 9,
+    title: "Aumentar a escala para 3 e mover",
+    // S·p0 = (3, 1.5, -3); + t = (1, 1.5, 1)
+    initialPosition: new Vector3(1, 0.5, -1),
+    initialSize: new Vector3(1, 1, 1),
+    targetTranslation: new Vector3(-2, 0, 4),
+    targetScale: new Vector3(3, 3, 3),
+    showGoal: true,
+  },
+  {
+    order: 10,
+    title: "Escala 2 e translação nos três eixos",
+    // S·p0 = (6, 1, 6); + t = (2, 2, 2)
+    initialPosition: new Vector3(3, 0.5, 3),
+    initialSize: new Vector3(1, 1, 1),
+    targetTranslation: new Vector3(-4, 1, -4),
+    targetScale: new Vector3(2, 2, 2),
     showGoal: true,
   },
 ];
