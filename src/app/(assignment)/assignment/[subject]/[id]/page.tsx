@@ -1,15 +1,7 @@
 "use client";
 
 // External dependencies
-import { redirect } from "next/navigation";
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useCallback,
-  useMemo,
-  use,
-  useState,
-} from "react";
+import React, { useLayoutEffect, use, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 // Components
@@ -19,19 +11,14 @@ import ObjectivePanel2D from "@/components/objective-panel-2d";
 import ObjectivePanel3D from "@/components/objective-panel-3d";
 import AssignmentNotAnswered from "@/components/assignment-not-answered";
 import AssignmentResult from "@/components/assignment-result";
+import AssignmentInfoButton from "@/components/assignment-info-button";
 import SidePanel from "@/components/side-panel";
-import { Button } from "@/components/ui/button";
 
 // Hooks
-import { useAssignment } from "@/hooks/use-assignment";
-import { useAssignmentKeyboardShortcuts } from "@/hooks/use-assignment-keyboard-shortcut";
-import { useResetStores } from "@/hooks/use-reset-stores";
+import { useSubjectAssignmentPage } from "@/hooks/use-subject-assignment-page";
 
 // Store
 import { useScene2DStore } from "@/store/scene2DStore";
-
-// Constants
-import { subjects } from "@/constants/assignments";
 
 export default function SpecificAssignmentPage({
   params,
@@ -41,45 +28,17 @@ export default function SpecificAssignmentPage({
   // State initialization
   const { subject, id } = use(params);
   const { config } = useScene2DStore();
-  const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [isAssignmentMinimized, setIsAssignmentMinimized] = useState(false);
   const {
     assignment,
-    setAssignment,
+    subjectData,
     assignmentState,
-    setAssignmentState,
+    isLastAssignmentInSubject,
     handleConfirm,
-    setStartTime,
-    incrementAttemptCount,
-    resetAttemptCount,
-  } = useAssignment(subject);
-  const resetAll = useResetStores();
-
-  // Derived state
-  const subjectData = useMemo(
-    () => subjects.find(s => s.slug === subject),
-    [subject]
-  );
-  const isLastAssignmentInSubject = useMemo(() => {
-    if (!subjectData || !assignment) return false;
-    const currentIndex = subjectData.assignments.findIndex(
-      a => a.id === assignment.id
-    );
-    return currentIndex === subjectData.assignments.length - 1;
-  }, [assignment, subjectData]);
-
-  // Effects
-  useEffect(() => {
-    resetAll();
-    if (!subjectData) return;
-
-    const assi = subjectData.assignments.find(a => a.id === id);
-    if (assi) {
-      setStartTime(Date.now());
-      setAssignment(assi);
-      assi.setup();
-    }
-  }, [id, subjectData, resetAll, setAssignment, setStartTime]);
+    handleTryAgain,
+    handleNext,
+    handlePrevious,
+  } = useSubjectAssignmentPage(subject, id);
 
   useLayoutEffect(() => {
     document.body.style.overflow = "hidden";
@@ -88,84 +47,12 @@ export default function SpecificAssignmentPage({
     };
   }, []);
 
-  // Event handlers
-  const handleTryAgain = useCallback(() => {
-    resetAll();
-    setAssignmentState("notAnswered");
-    setStartTime(Date.now());
-    incrementAttemptCount();
-    assignment?.setup();
-  }, [
-    resetAll,
-    assignment,
-    setAssignmentState,
-    setStartTime,
-    incrementAttemptCount,
-  ]);
-
-  const handleNext = useCallback(() => {
-    if (!assignment || !subjectData) return;
-
-    const currentIndex = subjectData.assignments.findIndex(
-      a => a.id === assignment.id
-    );
-    const nextAssignment = subjectData.assignments[currentIndex + 1];
-
-    if (nextAssignment) {
-      resetAttemptCount();
-      redirect(`/assignment/${subject}/${nextAssignment.id}`);
-    } else {
-      redirect(`/subject/${subject}`);
-    }
-  }, [assignment, subject, subjectData, resetAttemptCount]);
-
-  const handlePrevious = useCallback(() => {
-    if (!assignment || !subjectData) return;
-
-    const currentIndex = subjectData.assignments.findIndex(
-      a => a.id === assignment.id
-    );
-    const previousAssignment = subjectData.assignments[currentIndex - 1];
-
-    if (previousAssignment) {
-      resetAttemptCount();
-      redirect(`/assignment/${subject}/${previousAssignment.id}`);
-    } else {
-      redirect(`/subject/${subject}`);
-    }
-  }, [assignment, subject, subjectData, resetAttemptCount]);
-
-  // Keyboard shortcuts
-  useAssignmentKeyboardShortcuts(
-    assignmentState,
-    handleConfirm,
-    handleTryAgain,
-    handleNext
-  );
-
   // Early return if no assignment loaded
   if (!assignment || !subjectData) return null;
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
-        {isInfoVisible && (
-          <div
-            role="status"
-            className="w-64 rounded-md border bg-white p-4 text-sm shadow-lg"
-          />
-        )}
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-white"
-          aria-label="Abrir informações da questão"
-          aria-expanded={isInfoVisible}
-          onClick={() => setIsInfoVisible(visible => !visible)}
-        >
-          <span className="text-lg font-bold">i</span>
-        </Button>
-      </div>
+      <AssignmentInfoButton />
 
       {/* Render appropriate scene based on subject type */}
       {subjectData.type === "2D" ? (

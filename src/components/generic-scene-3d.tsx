@@ -8,6 +8,8 @@ interface GenericScene3DProps {
   perspectiveProjection?: boolean;
   projectionMode?: ProjectionMode;
   extendNegativeZGrid?: boolean;
+  // Classes do container; por padrão ocupa a tela inteira
+  className?: string;
 }
 
 export default function GenericScene3D({
@@ -15,11 +17,12 @@ export default function GenericScene3D({
   perspectiveProjection = false,
   projectionMode = "parallel",
   extendNegativeZGrid = false,
+  className = "w-full h-screen",
 }: GenericScene3DProps) {
   const { cubes, projectionCubes } = useScene3DStore();
 
   return (
-    <div className="w-full h-screen bg-black">
+    <div className={`${className} bg-black`}>
       <Canvas>
         <Scene3D
           cubes={cubes}
