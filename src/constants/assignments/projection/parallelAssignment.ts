@@ -205,6 +205,71 @@ const parallelAssignmentConfigs: ParallelAssignmentConfig[] = [
       { position: new Vector3(-4, 2, -4), color: "blue" },
     ],
   },
+  {
+    // Volume padrão: x ∈ [-3, 3], y ∈ [0, 4], z ∈ [-3, 3]
+    // O cubo azul começa dentro e precisa sair
+    instructions:
+      "Inclua os cubos vermelho e verde no volume de projeção e deixe o cubo azul de fora.",
+    include: [
+      { position: new Vector3(-6, 1, -6), color: "red" },
+      { position: new Vector3(6, 1, -6), color: "green" },
+    ],
+    exclude: [{ position: new Vector3(0, 1, 0), color: "blue" }],
+  },
+  {
+    // Volume padrão: x ∈ [-3, 3], y ∈ [0, 4], z ∈ [-3, 3]
+    // O cubo verde começa parcialmente dentro e precisa sair
+    instructions:
+      "Inclua os cubos vermelho e amarelo, um acima do outro, sem incluir o cubo verde.",
+    include: [
+      { position: new Vector3(0, 1, 0), color: "red" },
+      { position: new Vector3(0, 7, 0), color: "yellow" },
+    ],
+    exclude: [{ position: new Vector3(3, 4, 0), color: "green" }],
+  },
+  {
+    // Cubo médio: x ∈ [-2, 2], y ∈ [0, 4], z ∈ [-2, 2]
+    // O laranja tem lado 3; o roxo começa dentro e precisa sair
+    instructions:
+      "O cubo laranja é maior que os outros. Coloque-o inteiro dentro do volume de projeção, deixando o cubo roxo de fora.",
+    volumeSize: new Vector3(4, 4, 4),
+    include: [
+      {
+        position: new Vector3(4, 1.5, 4),
+        size: new Vector3(3, 3, 3),
+        color: "orange",
+      },
+    ],
+    exclude: [{ position: new Vector3(0, 1, 0), color: "purple" }],
+  },
+  {
+    // Cubo mínimo: x ∈ [-1, 1], y ∈ [1, 3], z ∈ [-1, 1]
+    instructions:
+      "Inclua os cubos vermelho, amarelo e verde no volume de projeção, deixando de fora os cubos azul e laranja.",
+    volumeSize: new Vector3(2, 2, 2),
+    include: [
+      { position: new Vector3(-4, 1, 4), color: "red" },
+      { position: new Vector3(4, 1, 4), color: "yellow" },
+      { position: new Vector3(-4, 1, -4), color: "green" },
+    ],
+    exclude: [
+      { position: new Vector3(0, 6, 0), color: "blue" },
+      { position: new Vector3(7, 1, 0), color: "orange" },
+    ],
+  },
+  {
+    // Volume grande: x ∈ [-8, 8], y ∈ [-2, 6], z ∈ [-8, 8]
+    // Todos os cubos começam dentro; é preciso encolher o volume
+    instructions:
+      "Todos os cubos começam dentro do volume. Reduza-o até que apenas o cubo azul fique dentro dele.",
+    volumeSize: new Vector3(16, 8, 16),
+    include: [{ position: new Vector3(-5, 1, -5), color: "blue" }],
+    exclude: [
+      { position: new Vector3(5, 1, 5), color: "red" },
+      { position: new Vector3(-5, 1, 5), color: "yellow" },
+      { position: new Vector3(5, 1, -5), color: "green" },
+    ],
+  },
 ];
 
 export const parallelAssignmentList = createParallelAssignments({
