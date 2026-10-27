@@ -100,6 +100,7 @@ export default function ProjectionAssignmentPage({
               isLastAssignment={isLastAssignmentInSubject}
               onTryAgain={handleTryAgain}
               onNext={handleNext}
+              feedback={assignment.feedback}
             />
           )}
         </div>
