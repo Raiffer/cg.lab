@@ -65,6 +65,9 @@ export default function SubjectPage({
     rotation: "Rotação",
     scaling: "Escala",
     multiplication: "Multiplicação",
+    "matrix-fundamentals": "Fundamentos de matrizes",
+    determinants: "Determinantes",
+    "linear-systems": "Sistemas lineares",
     projection: "Projeção",
   };
 

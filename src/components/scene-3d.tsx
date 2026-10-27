@@ -9,11 +9,17 @@ import {
   Line,
 } from "@react-three/drei";
 import Cube from "./cube";
+import CustomPlane3D from "./custom-plane-3d";
 import ParallelCube from "./parallel-cube";
 import PerspectiveCube from "./perspective-cube";
 import { useRef, useState } from "react";
 import { useThree } from "@react-three/fiber";
-import { ProjectionMode, TCube, TProjectionCube } from "@/store/scene3DStore";
+import {
+  ProjectionMode,
+  TCube,
+  TPlane,
+  TProjectionCube,
+} from "@/store/scene3DStore";
 import { MOUSE, Vector3 } from "three";
 
 const SECONDARY_CAMERA_POSITION: [number, number, number] = [12, 12, 12];
@@ -24,6 +30,7 @@ const SECONDARY_CAMERA_POLAR_ANGLE = Math.acos(
 
 interface Props {
   cubes: TCube[];
+  planes?: TPlane[];
   projectionCubes?: TProjectionCube[];
   cameraPosition?: [number, number, number];
   minimalView?: boolean;
@@ -38,6 +45,7 @@ interface Props {
 
 export function Scene3D({
   cubes,
+  planes,
   projectionCubes = [],
   cameraPosition,
   minimalView = false,
@@ -310,6 +318,10 @@ export function Scene3D({
             />
           )
         ))}
+
+      {planes?.map(plane => (
+        <CustomPlane3D key={plane.id} plane={plane} />
+      ))}
 
       <group visible={!minimalView}>
         {/* Render X-axis labels */}

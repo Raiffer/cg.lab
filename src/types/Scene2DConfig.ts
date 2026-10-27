@@ -23,7 +23,41 @@ export type TVector = {
   middleMovable?: boolean;
   color?: string;
   label?: string;
+  /** Where the label sits relative to the vector. Defaults to "middle"
+   * (existing behavior everywhere) — "tip" places it right next to the
+   * arrowhead, for exercises where distinguishing which vector is which
+   * matters more than reading its magnitude at a glance. */
+  labelPosition?: "middle" | "tip";
   showValue?: boolean;
+};
+
+/** A curved arrow showing the rotation from one direction to another
+ * (e.g. "turning L1 until it lines up with L2") — the arc always sweeps
+ * the SHORT way between the two angles, in the given direction. */
+export type TArc = {
+  id: string;
+  center: [number, number];
+  radius: number;
+  fromAngle: number; // degrees
+  toAngle: number; // degrees
+  direction: "clockwise" | "counterclockwise";
+  color?: string;
+};
+
+/** An infinite line through two points (extends to the edges of the view,
+ * not just the segment between them) — for showing a linear equation
+ * ax + by = c as what it actually is geometrically, not just a segment. */
+export type TLine = {
+  id: string;
+  point1: [number, number];
+  point2: [number, number];
+  color?: string;
+  style?: "solid" | "dashed";
+  /** Stroke thickness. Useful for telling two lines apart when they land
+   * exactly on top of each other (a thick solid line under a thin dashed
+   * one still shows both colors, striped, instead of one hiding the other). */
+  weight?: number;
+  label?: string;
 };
 
 export type TPolygon = {
@@ -64,4 +98,6 @@ export type Scene2DConfig = {
   polygons?: TPolygon[];
   objectivePolygons?: TPolygon[];
   annotations?: Annotation[];
+  arcs?: TArc[];
+  lines?: TLine[];
 };

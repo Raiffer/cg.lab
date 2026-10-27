@@ -8,6 +8,9 @@ export type SubjectCategories =
   | "rotation"
   | "scaling"
   | "multiplication"
+  | "matrix-fundamentals"
+  | "determinants"
+  | "linear-systems"
   | "projection";
 
 export type DailyMission = {
@@ -65,5 +68,23 @@ export const defaultDailyMissions: DailyMission[] = [
     title: "Complete 5 exercícios sobre Escala",
     target: 5,
     subjectCategory: "scaling",
+  },
+  {
+    id: "complete-5-exercises-on-matrix-fundamentals",
+    title: "Complete 5 exercícios sobre Fundamentos de matrizes",
+    target: 5,
+    subjectCategory: "matrix-fundamentals",
+  },
+  {
+    id: "complete-5-exercises-on-determinants",
+    title: "Complete 5 exercícios sobre Determinantes",
+    target: 5,
+    subjectCategory: "determinants",
+  },
+  {
+    id: "complete-5-exercises-on-linear-systems",
+    title: "Complete 5 exercícios sobre Sistemas Lineares",
+    target: 5,
+    subjectCategory: "linear-systems",
   },
 ];

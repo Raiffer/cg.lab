@@ -170,7 +170,10 @@ export default function RandomAssignmentPage() {
       )}
 
       {/* Assignment interface */}
-      <div className="absolute bottom-4 bg-gray-200 p-4 rounded-md left-2 w-3/4 md:w-[40%] border-b-4 border-b-gray-400">
+      <div
+        id="assignment-panel"
+        className="absolute bottom-4 bg-gray-200 p-4 rounded-md left-2 w-3/4 md:w-[40%] border-b-4 border-b-gray-400"
+      >
         <div className="text-center">
           <AssignmentResultRandom
             state={assignmentState}

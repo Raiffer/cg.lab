@@ -47,6 +47,27 @@ export interface Assignment {
   title: string;
   instructions: string;
   assisted: boolean;
+  /**
+   * When true, the assignment doesn't use the 2D/3D scene: the plane/grid is
+   * hidden, the background is plain white and the question panel is centered
+   * on the page. Used by exercises that only manipulate matrices/text.
+   */
+  hideCanvas?: boolean;
+  /**
+   * Optional short pedagogical message shown alongside the correct/incorrect
+   * result, tying the answer back to the concept being tested — e.g.
+   * explaining *why* it was right, or pointing attention back at what to
+   * look for on a miss. Purely additive: assignments that don't set it keep
+   * the plain "Você acertou/errou" message.
+   *
+   * Either field can be a plain string, or a function called at render time
+   * — for exercises where the explanation depends on which wrong option was
+   * actually picked (read from the relevant store inside the function).
+   */
+  feedback?: {
+    correct?: string | (() => string);
+    incorrect?: string | (() => string);
+  };
   type: AssignmentType;
   subjectCategory: SubjectCategories;
   projectionMode?: "parallel" | "perspective";

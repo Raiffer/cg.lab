@@ -82,6 +82,16 @@ const subjects: Subject[] = [
     type: "2D",
   },
   {
+    title: "Fundamentos de Matrizes",
+    description:
+      "Aprenda a ler índices, somar, subtrair e multiplicar matrizes.",
+    slug: "matrix-fundamentals",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "matrix-fundamentals"
+    ),
+    type: "2D",
+  },
+  {
     title: "Matriz de Translação",
     description: "Aprenda a criar matrizes de translação 2D.",
     slug: "translation",
@@ -109,12 +119,22 @@ const subjects: Subject[] = [
     type: "2D",
   },
   {
-    title: "Multiplicação de Matrizes",
+    title: "Determinantes",
     description:
-      "Aprenda a fundir transformações 2D em uma única matriz de transformação.",
-    slug: "multiplication",
+      "Aprenda a calcular e a enxergar o determinante como área/volume.",
+    slug: "determinants",
     assignments: transformationAssignments.filter(
-      assi => assi.subjectCategory === "multiplication"
+      assi => assi.subjectCategory === "determinants"
+    ),
+    type: "2D",
+  },
+  {
+    title: "Sistemas Lineares",
+    description:
+      "Aprenda a classificar e resolver sistemas lineares por escalonamento.",
+    slug: "linear-systems",
+    assignments: transformationAssignments.filter(
+      assi => assi.subjectCategory === "linear-systems"
     ),
     type: "2D",
   },
@@ -145,6 +165,16 @@ const subjects: Subject[] = [
     slug: "rotation3d",
     assignments: matrices3dAssignments.filter(
       assi => assi.subjectCategory === "rotation"
+    ),
+    type: "3D",
+  },
+  {
+    title: "Sistemas Lineares 3D",
+    description:
+      "Aprenda a classificar sistemas lineares de 3 variáveis enxergando os planos se encontrarem (ou não).",
+    slug: "linear-systems3d",
+    assignments: matrices3dAssignments.filter(
+      assi => assi.subjectCategory === "linear-systems"
     ),
     type: "3D",
   },

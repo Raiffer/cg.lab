@@ -19,13 +19,16 @@ export default function GenericScene3D({
   extendNegativeZGrid = false,
   className = "w-full h-screen",
 }: GenericScene3DProps) {
-  const { cubes, projectionCubes } = useScene3DStore();
+  const { cubes, planes, cameraPosition, projectionCubes } =
+    useScene3DStore();
 
   return (
     <div className={`${className} bg-black`}>
       <Canvas>
         <Scene3D
           cubes={cubes}
+          planes={planes}
+          cameraPosition={cameraPosition ?? undefined}
           projectionCubes={projectionCubes[projectionMode]}
           parallelProjection={parallelProjection}
           perspectiveProjection={perspectiveProjection}

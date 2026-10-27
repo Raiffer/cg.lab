@@ -6,6 +6,7 @@ import {
 import { movePointAssignmentsList } from "./movePoint";
 import { pointPositionWithOptionsAssignmentsList } from "./pointPosition";
 import { whichPositionAssignmentList } from "./whichPosition";
+import { reflectPointOverAxisAssignmentsList } from "./reflectPointOverAxis";
 
 export const pointsAssignments: Assignment[] = [
   ...pointPositionWithOptionsAssignmentsList,
@@ -13,4 +14,5 @@ export const pointsAssignments: Assignment[] = [
   alignPointsInYAxisAssignment,
   ...movePointAssignmentsList,
   ...whichPositionAssignmentList,
+  ...reflectPointOverAxisAssignmentsList,
 ];
