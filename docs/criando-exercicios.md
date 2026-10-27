@@ -283,6 +283,7 @@ usada em exercícios de transformação), `getPoint`/`getVector`/`getPolygon`.
 | `FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS` | `fillInMatrixWithOptions` | `fill-in-matrix-with-options.tsx` |
 | `FILL_IN_THE_BLANK_FORMULA` | `fillInVecLengthFormulaStore` | `fill-in-vec-length-formula.tsx` |
 | `ORDER_MATRIX_MULTIPLICATION` | `orderMatrixMultiplicationStore` | `order-matrix-multiplication.tsx` |
+| `PROJECTION_MULTIPLE_CHOICE` | `multipleChoiceStore` + `scene3DStore` | `multiple-choice-options.tsx` |
 | `PARAMETERIZED` | — | **não implementado** — existe no enum mas nenhum exercício ou componente usa esse tipo hoje. Evite usá-lo a menos que você também construa o componente de UI correspondente |
 
 A escolha de qual componente renderizar por `assignment.type` acontece em
@@ -472,6 +473,29 @@ usa, e não existe componente de UI associado a ele** em
 `assignment-not-answered.tsx`. Provavelmente reservado para um tipo futuro
 (exercício com parâmetros configuráveis dinamicamente). Se quiser usá-lo,
 será necessário também implementar o componente de UI correspondente.
+
+---
+
+### 5.9 `PROJECTION_MULTIPLE_CHOICE`
+
+**O que é:** questão fechada do módulo de projeção. A tela mostra apenas a
+cena principal (vista através do volume de projeção), ocupando toda a
+largura, sem janela secundária e sem interação com a cena. O aluno responde
+escolhendo uma das alternativas no painel da questão.
+
+**Como funciona:**
+- Use o construtor `createProjectionMultipleChoiceAssignment` em
+  `src/constants/assignments/projection/projectionMultipleChoiceAssignment.ts`,
+  informando `id`, `instructions` (enunciado), `volume` (paralelo ou
+  perspectiva, que define a câmera da cena), `objects` (cubos da cena) e
+  `options` (alternativas, cada uma com `correct`).
+- `setup()` monta a cena no `scene3DStore` e grava as alternativas no
+  `multipleChoiceStore`.
+- `validate()` confere a flag `correct` da alternativa escolhida.
+- O botão "Confirmar" só fica ativo depois que uma alternativa é escolhida.
+
+**Exemplo real:** `projectionTypeIdentificationAssignment`, no mesmo arquivo —
+o aluno observa a cena e diz se a projeção é paralela ou em perspectiva.
 
 ---
 

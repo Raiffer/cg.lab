@@ -16,6 +16,8 @@ import SliderAssignment from "./slider-assignment";
 import { Button } from "./ui/button";
 import { useFillInTheBlankStore } from "@/store/fillInTheBlankStore";
 import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
+import MultipleChoiceOptions from "./multiple-choice-options";
+import { useMultipleChoiceStore } from "@/store/multipleChoiceStore";
 
 interface Props {
   assignment: Assignment | null;
@@ -37,6 +39,11 @@ export default function AssignmentNotAnswered({
   const { matrices } = useFillBlankMatrixInputStore();
   const { vecLengthFormulas } = useFillInVecLengthFormulaStore();
   const projectionQuestions = assignment?.projectionQuestions;
+  const selectedChoiceId = useMultipleChoiceStore(
+    state => state.selectedOptionId
+  );
+  const isMultipleChoice =
+    assignment?.type === AssignmentType.PROJECTION_MULTIPLE_CHOICE;
 
   useEffect(() => {
     setAnswers({});
@@ -118,6 +125,8 @@ export default function AssignmentNotAnswered({
 
       <OrderMatrixMultiplication />
 
+      {isMultipleChoice && <MultipleChoiceOptions />}
+
       {/*Div com os botões de confirmar respostas, ir para a questão anterior e próxima questão*/}
       <div className="flex items-center justify-center gap-4 mt-4">
         {handlePrevious && (
@@ -131,10 +140,11 @@ export default function AssignmentNotAnswered({
             projectionQuestions ? handleConfirm(answers) : handleConfirm()
           }
           disabled={
-            !!projectionQuestions &&
-            projectionQuestions.some(
-              question => answers[question.id] === undefined
-            )
+            (!!projectionQuestions &&
+              projectionQuestions.some(
+                question => answers[question.id] === undefined
+              )) ||
+            (isMultipleChoice && !selectedChoiceId)
           }
         >
           Confirmar

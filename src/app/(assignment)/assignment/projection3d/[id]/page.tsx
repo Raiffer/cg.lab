@@ -20,6 +20,7 @@ import AssignmentInfoButton from "@/components/assignment-info-button";
 import SidePanel from "@/components/side-panel";
 
 import { useSubjectAssignmentPage } from "@/hooks/use-subject-assignment-page";
+import { AssignmentType } from "@/types/Assignment";
 
 const SUBJECT = "projection3d";
 
@@ -50,18 +51,28 @@ export default function ProjectionAssignmentPage({
   if (!assignment || !subjectData) return null;
 
   const projectionMode = assignment.projectionMode;
+  // Questão fechada: só a cena principal, ocupando toda a largura e sem
+  // interação; o aluno responde apenas pelo painel da questão
+  const isClosedQuestion =
+    assignment.type === AssignmentType.PROJECTION_MULTIPLE_CHOICE;
 
   return (
     <div className="flex h-screen w-screen flex-col bg-gray-100">
       {/* Cenas lado a lado: 2/3 da altura */}
       <div className="flex h-2/3 w-full">
-        <div className="flex h-full w-1/2 flex-col border-r-2 border-gray-400 bg-black">
+        <div
+          className={`flex h-full flex-col bg-black ${
+            isClosedQuestion ? "w-full" : "w-1/2 border-r-2 border-gray-400"
+          }`}
+        >
           {/* Título alinhado à direita para não ficar atrás do botão X */}
           <div className="flex justify-end border-b-2 border-gray-400 bg-zinc-900 px-4 py-2 text-white">
             <h1 className="font-semibold">Cena principal</h1>
           </div>
           <GenericScene3D
-            className="min-h-0 w-full flex-1"
+            className={`min-h-0 w-full flex-1 ${
+              isClosedQuestion ? "pointer-events-none select-none" : ""
+            }`}
             parallelProjection={projectionMode === "parallel"}
             perspectiveProjection={projectionMode === "perspective"}
             projectionMode={projectionMode}
@@ -69,16 +80,18 @@ export default function ProjectionAssignmentPage({
           />
         </div>
 
-        <div className="h-full w-1/2">
-          <ObjectivePanel3D
-            layout="fill"
-            title="Volume de projeção"
-            minimalView
-            mirrorMainScene
-            projectionMode={projectionMode}
-            extendNegativeZGrid
-          />
-        </div>
+        {!isClosedQuestion && (
+          <div className="h-full w-1/2">
+            <ObjectivePanel3D
+              layout="fill"
+              title="Volume de projeção"
+              minimalView
+              mirrorMainScene
+              projectionMode={projectionMode}
+              extendNegativeZGrid
+            />
+          </div>
+        )}
       </div>
 
       {/* Painel Questão: 1/3 da altura */}

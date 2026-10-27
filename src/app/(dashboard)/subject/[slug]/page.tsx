@@ -23,6 +23,7 @@ import {
   Space,
   Variable,
   Pen,
+  ListChecks,
 } from "lucide-react";
 import Link from "next/link";
 import React, { use } from "react";
@@ -53,6 +54,7 @@ export default function SubjectPage({
     FILL_IN_THE_BLANK_FORMULA: <Radical />,
     PARAMETERIZED: <Variable />,
     ORDER_MATRIX_MULTIPLICATION: <BringToFront />,
+    PROJECTION_MULTIPLE_CHOICE: <ListChecks />,
   };
 
   const mapSubjectCategoryToPortuguese: Record<SubjectCategories, string> = {
