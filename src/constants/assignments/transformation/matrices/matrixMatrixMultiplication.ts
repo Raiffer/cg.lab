@@ -126,6 +126,9 @@ function createDotProductAssignment(
     ...baseAssignment(order),
     instructions: `Multiplicação de matrizes não é feita elemento a elemento: multiplica-se cada par (mesma posição) e somam-se os produtos. A é 1×${rowVector.length} e B é ${columnVector.length}×1, então A · B é 1×1. Calcule A · B.`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Multiplique cada elemento de A pelo elemento correspondente de B (mesma posição) e some tudo: ${rowVector.map((v, i) => `${v}×${columnVector[i]}`).join(" + ")}.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -177,6 +180,10 @@ function createDimensionRuleAssignment(
     ...baseAssignment(order),
     instructions: `Para calcular A · B, o número de colunas de A precisa ser igual ao número de linhas de B (aqui A é ${rows}×${inner} e B é ${matrixB.length}×${cols}). A · B é possível? Se sim, qual é a ordem do resultado?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect:
+        "Compare o número de colunas de A com o número de linhas de B: se forem iguais, a multiplicação é possível e o resultado tem o número de linhas de A e o número de colunas de B. Se forem diferentes, não é possível.",
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -222,6 +229,9 @@ function createSingleEntryChoiceAssignment(
     ...baseAssignment(order),
     instructions: `Observe A e B. ${el} de A · B é a soma dos produtos da linha ${targetRow} de A pela coluna ${targetCol} de B. Qual é o valor de ${el}?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Multiplique cada elemento da linha ${targetRow} de A pelo elemento correspondente da coluna ${targetCol} de B (mesma posição) e some os resultados.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -251,6 +261,9 @@ function createFullResultAssignment(
     ...baseAssignment(order),
     instructions: `Calcule C = A · B e preencha todas as células de C.`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: "Cada elemento de C é a soma dos produtos de uma linha de A pela coluna correspondente de B (regra linha vezes coluna, não elemento a elemento). Revise célula por célula.",
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -302,6 +315,9 @@ function createSingleGapAssignment(
     ...baseAssignment(order),
     instructions: `Complete o elemento que falta em C = A · B (aqui, cada elemento de C soma ${matrixA[0].length} produtos, não 2).`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: `Para essa célula, multiplique CADA elemento da linha ${gapRow} de A pelo elemento correspondente da coluna ${gapCol} de B, e some os ${matrixA[0].length} produtos.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -365,6 +381,9 @@ function createErrorSpotAssignment(
     ...baseAssignment(order),
     instructions: `A matriz C abaixo deveria ser C = A · B, mas exatamente um elemento está incorreto. Qual é o elemento errado?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: "Refaça a regra linha vezes coluna para cada posição de C e compare com o valor mostrado: um erro comum é multiplicar A e B elemento a elemento em vez de somar os produtos da linha pela coluna.",
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),

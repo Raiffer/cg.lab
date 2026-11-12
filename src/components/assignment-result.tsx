@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import Lottie from "lottie-react";
 import successAnimationData from "@/assets/success-anim.json";
 import failAnimationData from "@/assets/fail-anim.json";
+import { resolveFeedback } from "@/utils";
 
 type FeedbackText = string | (() => string);
 
@@ -13,11 +14,11 @@ interface Props {
   onTryAgain: () => void;
   onNext: () => void;
   feedback?: { correct?: FeedbackText; incorrect?: FeedbackText };
-}
-
-function resolveFeedback(text: FeedbackText | undefined): string | undefined {
-  if (typeof text === "function") return text();
-  return text;
+  /** When true, the incorrect feedback text is shown elsewhere (the info
+   * button) instead of inline here — only set for the modules that moved to
+   * that hover/pop-up mechanic. Every other module keeps this inline text,
+   * unchanged. */
+  hideIncorrectFeedbackInline?: boolean;
 }
 
 export default function AssignmentResult({
@@ -26,11 +27,14 @@ export default function AssignmentResult({
   onTryAgain,
   onNext,
   feedback,
+  hideIncorrectFeedbackInline = false,
 }: Props) {
   if (state === "notAnswered") return null;
 
   const correctFeedback = resolveFeedback(feedback?.correct);
-  const incorrectFeedback = resolveFeedback(feedback?.incorrect);
+  const incorrectFeedback = hideIncorrectFeedbackInline
+    ? undefined
+    : resolveFeedback(feedback?.incorrect);
 
   return (
     <>

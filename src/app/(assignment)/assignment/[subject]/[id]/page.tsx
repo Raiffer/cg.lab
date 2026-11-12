@@ -32,6 +32,17 @@ import { useScene2DStore } from "@/store/scene2DStore";
 
 // Constants
 import { subjects } from "@/constants/assignments";
+import { SubjectCategories } from "@/constants/defaultDailyMissions";
+
+// The info-button hover/pop-up feedback mechanic is scoped to the modules
+// Guilherme built and maintains (Fundamentos de Matrizes, Determinantes,
+// Sistemas Lineares 2D/3D, which all share the "linear-systems" category) —
+// every other module keeps the original inline incorrect-feedback text.
+const OWNED_SUBJECT_CATEGORIES: SubjectCategories[] = [
+  "matrix-fundamentals",
+  "determinants",
+  "linear-systems",
+];
 
 export default function SpecificAssignmentPage({
   params,
@@ -41,7 +52,7 @@ export default function SpecificAssignmentPage({
   // State initialization
   const { subject, id } = use(params);
   const { config } = useScene2DStore();
-  const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const [isInfoHovered, setIsInfoHovered] = useState(false);
   const [isAssignmentMinimized, setIsAssignmentMinimized] = useState(false);
   const {
     assignment,
@@ -52,6 +63,9 @@ export default function SpecificAssignmentPage({
     setStartTime,
     incrementAttemptCount,
     resetAttemptCount,
+    wrongAttemptCount,
+    lastIncorrectFeedback,
+    resetWrongAttempts,
   } = useAssignment(subject);
   const resetAll = useResetStores();
 
@@ -113,11 +127,12 @@ export default function SpecificAssignmentPage({
 
     if (nextAssignment) {
       resetAttemptCount();
+      resetWrongAttempts();
       redirect(`/assignment/${subject}/${nextAssignment.id}`);
     } else {
       redirect(`/subject/${subject}`);
     }
-  }, [assignment, subject, subjectData, resetAttemptCount]);
+  }, [assignment, subject, subjectData, resetAttemptCount, resetWrongAttempts]);
 
   const handlePrevious = useCallback(() => {
     if (!assignment || !subjectData) return;
@@ -129,11 +144,12 @@ export default function SpecificAssignmentPage({
 
     if (previousAssignment) {
       resetAttemptCount();
+      resetWrongAttempts();
       redirect(`/assignment/${subject}/${previousAssignment.id}`);
     } else {
       redirect(`/subject/${subject}`);
     }
-  }, [assignment, subject, subjectData, resetAttemptCount]);
+  }, [assignment, subject, subjectData, resetAttemptCount, resetWrongAttempts]);
 
   // Keyboard shortcuts
   useAssignmentKeyboardShortcuts(
@@ -150,26 +166,53 @@ export default function SpecificAssignmentPage({
   // hide the scene, paint the background white and center the question.
   const hideCanvas = assignment.hideCanvas ?? false;
 
+  const isOwnedModule = OWNED_SUBJECT_CATEGORIES.includes(
+    assignment.subjectCategory
+  );
+
+  // The incorrect-feedback hint only exists once the student has actually
+  // gotten this question wrong at least once, only for exercises that define
+  // one, and only in the modules that moved to this mechanic. It stays
+  // available while they retry (assignmentState goes back to
+  // "notAnswered"), and disappears once they finally get it right.
+  const hasIncorrectHint =
+    isOwnedModule &&
+    Boolean(lastIncorrectFeedback) &&
+    assignmentState !== "correct";
+  // After 2 wrong attempts the student is clearly stuck: the info button
+  // pops open on its own instead of waiting to be hovered.
+  const shouldAutoOpenInfo = wrongAttemptCount > 2;
+  const isInfoVisible = hasIncorrectHint && (isInfoHovered || shouldAutoOpenInfo);
+
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
-        {isInfoVisible && (
-          <div
-            role="status"
-            className="w-64 rounded-md border bg-white p-4 text-sm shadow-lg"
-          />
-        )}
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-white"
-          aria-label="Abrir informações da questão"
-          aria-expanded={isInfoVisible}
-          onClick={() => setIsInfoVisible(visible => !visible)}
-        >
-          <span className="text-lg font-bold">i</span>
-        </Button>
-      </div>
+      {hasIncorrectHint && (
+        <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+          {isInfoVisible && (
+            <div
+              role="status"
+              className="w-64 rounded-md border bg-white p-4 text-sm shadow-lg"
+            >
+              {lastIncorrectFeedback}
+            </div>
+          )}
+          <Button
+            variant="outline"
+            size="icon"
+            className={`rounded-full bg-white ${
+              shouldAutoOpenInfo ? "ring-2 ring-red-400 animate-pulse" : ""
+            }`}
+            aria-label="Ver dica sobre a resposta incorreta"
+            aria-expanded={isInfoVisible}
+            onMouseEnter={() => setIsInfoHovered(true)}
+            onMouseLeave={() => setIsInfoHovered(false)}
+            onFocus={() => setIsInfoHovered(true)}
+            onBlur={() => setIsInfoHovered(false)}
+          >
+            <span className="text-lg font-bold">i</span>
+          </Button>
+        </div>
+      )}
 
       {/* Render appropriate scene based on subject type, or a blank white
           background for exercises that don't use the cartesian plane */}
@@ -269,6 +312,7 @@ export default function SpecificAssignmentPage({
                 onTryAgain={handleTryAgain}
                 onNext={handleNext}
                 feedback={assignment.feedback}
+                hideIncorrectFeedbackInline={isOwnedModule}
               />
             )}
           </div>

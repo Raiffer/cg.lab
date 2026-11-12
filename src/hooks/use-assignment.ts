@@ -3,6 +3,7 @@ import { useMutation } from "convex/react";
 import { isSameDay } from "date-fns";
 import { toast } from "@/hooks/use-toast";
 import { Assignment, AssignmentAnswers } from "@/types/Assignment";
+import { resolveFeedback } from "@/utils";
 import { api } from "../../convex/_generated/api";
 
 async function saveAttemptToSheets(data: {
@@ -83,6 +84,16 @@ export function useAssignment(subject?: string) {
   >("notAnswered");
   const [startTime, setStartTime] = useState<number | null>(null);
   const [attemptCount, setAttemptCount] = useState(1);
+  // Counts only WRONG attempts on the current question (unlike attemptCount,
+  // which counts every submit for analytics) — drives the info-button "pop"
+  // threshold. lastIncorrectFeedback is captured the moment the wrong
+  // answer is registered, before handleTryAgain resets the stores the
+  // feedback function might read from, so it stays correct while the
+  // student is retrying the same question.
+  const [wrongAttemptCount, setWrongAttemptCount] = useState(0);
+  const [lastIncorrectFeedback, setLastIncorrectFeedback] = useState<
+    string | undefined
+  >(undefined);
 
   const completeAssignmentMutation = useMutation(
     api.assignmentCompletions.completeAssignment
@@ -94,6 +105,10 @@ export function useAssignment(subject?: string) {
   }, []);
   const resetAttemptCount = useCallback(() => {
     setAttemptCount(1);
+  }, []);
+  const resetWrongAttempts = useCallback(() => {
+    setWrongAttemptCount(0);
+    setLastIncorrectFeedback(undefined);
   }, []);
 
   const handleConfirm = useCallback(
@@ -109,6 +124,8 @@ export function useAssignment(subject?: string) {
       if (!isCorrect) {
         assignment.onError?.();
         setAssignment({ ...assignment });
+        setWrongAttemptCount(prev => prev + 1);
+        setLastIncorrectFeedback(resolveFeedback(assignment.feedback?.incorrect));
       }
 
       const endTime = Date.now();
@@ -192,5 +209,8 @@ export function useAssignment(subject?: string) {
     setStartTime,
     incrementAttemptCount,
     resetAttemptCount,
+    wrongAttemptCount,
+    lastIncorrectFeedback,
+    resetWrongAttempts,
   };
 }

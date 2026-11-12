@@ -85,6 +85,10 @@ function createOrderMatrixMultiplication({
     order,
     type: AssignmentType.ORDER_MATRIX_MULTIPLICATION,
     subjectCategory: "matrix-fundamentals",
+    feedback: {
+      incorrect:
+        "A ordem importa: a primeira matriz selecionada age primeiro sobre o quadrado. Compare o resultado atual com o contorno do objetivo e ajuste a ordem, ou troque alguma matriz escolhida.",
+    },
     setup() {
       const { setPolygons, setObjectivePolygons } = useScene2DStore.getState();
       setPolygons(initialPolygons);

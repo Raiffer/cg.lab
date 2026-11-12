@@ -72,6 +72,10 @@ function create2x2Assignment(order: number, title: string, m: Grid2): Assignment
         ? "Uma matriz quadrada só tem inversa se det(A) ≠ 0. Calcule det(A): essa matriz possui inversa?"
         : "Calcule det(A): essa matriz possui inversa?",
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect:
+        "det(A) = a·d − b·c. Calcule esse valor: se for diferente de zero, a matriz possui inversa; se for zero, não possui.",
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         {
@@ -107,6 +111,10 @@ function create3x3Assignment(
       ? "Calcule det(A) pela expansão em cofatores na primeira linha (a=a₁₁, b=a₁₂, c=a₁₃): essa matriz possui inversa?"
       : "Calcule det(A): essa matriz possui inversa?",
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect:
+        "Uma matriz quadrada só tem inversa se det(A) ≠ 0. Calcule det(A) pela expansão em cofatores e compare o resultado com zero.",
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         {

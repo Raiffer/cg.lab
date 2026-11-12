@@ -123,10 +123,15 @@ function createSingleGapAssignment(
   const targetValue = matrixC[r][c];
   const symbol = OPERATION_SYMBOL[operation];
 
+  const elA = notation(gapRow, gapCol);
+
   return {
     ...baseAssignment(order, operation),
     instructions: `Complete o elemento que falta em C = A ${symbol} B.`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: `C é calculada posição a posição: cᵢⱼ = aᵢⱼ ${symbol} bᵢⱼ. Para essa célula, use ${elA} de A e ${elA} de B.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -174,6 +179,9 @@ function createFullResultAssignment(
     ...baseAssignment(order, operation),
     instructions: `Calcule C = A ${symbol} B e preencha todas as células de C.`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: `Cada célula de C é independente: cᵢⱼ = aᵢⱼ ${symbol} bᵢⱼ. Revise célula por célula, comparando com a posição correspondente em A e B.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -238,6 +246,9 @@ function createSingleCellChoiceAssignment(
     ...baseAssignment(order, operation),
     instructions: `Observe A e B. Qual é o valor do elemento ${el} de C = A ${symbol} B?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `${el} de C é ${el} de A ${symbol} ${el} de B. Releia esses dois valores e refaça a conta.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -281,6 +292,9 @@ function createCommutativityCheckAssignment(
     ...baseAssignment(order, operation),
     instructions: `${explanation} Sem calcular tudo: A ${symbol} B é igual a B ${symbol} A?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: explanation,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -335,6 +349,9 @@ function createComputedMultiCellAssignment(
     ...baseAssignment(order, operation),
     instructions: `Calcule C = A ${symbol} B e preencha as posições ${notations}, na ordem em que aparecem (de cima para baixo, esquerda para direita).`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Calcule cada posição (${notations}) como aᵢⱼ ${symbol} bᵢⱼ, e clique nas opções na ordem em que as lacunas aparecem na matriz (de cima pra baixo, esquerda pra direita).`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -402,6 +419,9 @@ function createErrorSpotAssignment(
     ...baseAssignment(order, operation),
     instructions: `A matriz C abaixo deveria ser C = A ${symbol} B, mas exatamente um elemento está incorreto. Qual é o elemento errado?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Refaça a conta cᵢⱼ = aᵢⱼ ${symbol} bᵢⱼ posição por posição e compare com o valor mostrado em C: só uma delas vai bater errado.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),

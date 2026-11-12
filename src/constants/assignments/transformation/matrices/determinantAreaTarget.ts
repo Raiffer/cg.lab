@@ -40,8 +40,12 @@ import { createSquare } from "@/utils/polygon";
  *   2  dobrar a área (alvo = 2, módulo > 1 ⇒ amplia)
  *   3  reduzir a área pela metade (alvo = 0.5, módulo < 1 ⇒ encolhe)
  *   4  zerar a área (alvo = 0) — matriz singular: o quadrado "achata" numa
- *      linha ou ponto, a mesma ideia da questão de singularidade, agora
- *      construída pelo próprio aluno em vez de só reconhecida.
+ *      linha com comprimento, a mesma ideia da questão de singularidade,
+ *      agora construída pelo próprio aluno em vez de só reconhecida. A
+ *      matriz nula (todos os valores 0) é rejeitada de propósito: ela
+ *      também zera a área, mas reduz o quadrado a um ponto (posto 0) em vez
+ *      de uma linha (posto 1) — aceitá-la tornaria a matriz nula uma
+ *      "solução" trivial e não ensinaria nada sobre matrizes de posto 1.
  *   5–6  alvos livres, sem dizer qual operação usar (redondo e depois
  *        decimal), para consolidar sem a "dica" do enunciado.
  *
@@ -68,20 +72,41 @@ function formatAreaValue(value: number): string {
   return String(Math.round(value * 100) / 100);
 }
 
+/** `Number("")` is `0` in JS, not `NaN` — so an empty cell would otherwise
+ * read as a valid zero. Checked before `Number(...)` everywhere a cell value
+ * is parsed, so an untouched field never silently counts as "0". */
+function isBlank(raw: string | number): boolean {
+  return String(raw).trim() === "";
+}
+
+/** True for the matrix that maps everything to the origin (every entry is
+ * ~0): it does zero the area, but collapses the square to a single point
+ * instead of a line segment, so it's rejected as a trivial non-answer for
+ * the "zero" goal (see validate() below). */
+function isNullMatrix(values: number[]): boolean {
+  return values.every(value => Math.abs(value) < AREA_TOLERANCE);
+}
+
 /** Shows the target and the live current area side by side — a direct
  * number-to-number comparison, since no single fixed shape could honestly
  * represent "any parallelogram with this area" as a visual target. */
-function makeLiveAreaStat(targetArea: number) {
+function makeLiveAreaStat(targetArea: number, goal: AreaGoal) {
   return (matrixValue: MatrixValue[][]): string => {
     const [[a, b], [c, d]] = matrixValue;
-    const raw = [a.value, b.value, c.value, d.value].map(Number);
+    const rawValues = [a.value, b.value, c.value, d.value];
     const targetLabel = `Área alvo: ${formatAreaValue(targetArea)}`;
-    if (raw.some(value => Number.isNaN(value))) {
-      return `${targetLabel}\nÁrea atual: —`;
+    if (rawValues.some(isBlank)) {
+      return `${targetLabel}\nÁrea atual: -`;
     }
-    const [av, bv, cv, dv] = raw;
+    const values = rawValues.map(Number);
+    if (values.some(value => Number.isNaN(value))) {
+      return `${targetLabel}\nÁrea atual: -`;
+    }
+    const [av, bv, cv, dv] = values;
     const area = Math.abs(av * dv - bv * cv);
-    const reached = Math.abs(area - targetArea) < AREA_TOLERANCE;
+    const reached =
+      Math.abs(area - targetArea) < AREA_TOLERANCE &&
+      (goal !== "zero" || !isNullMatrix(values));
     return `${targetLabel}\nÁrea atual: ${formatAreaValue(area)}${reached ? " ✓" : ""}`;
   };
 }
@@ -93,7 +118,7 @@ const instructionsByGoal: Record<AreaGoal, (targetArea: number) => string> = {
   half: () =>
     "Preencha a matriz A para que a área do quadrado azul fique pela METADE.",
   zero: () =>
-    "Preencha a matriz A para que a área do quadrado azul vire uma linha ou um ponto (área zero).",
+    "Preencha a matriz A para transformar o quadrado azul em um segmento de reta de comprimento diferente de zero. A área da figura transformada deve ser zero, mas ela não pode ser reduzida a um único ponto.",
   free: targetArea =>
     `Preencha a matriz A para que a área do quadrado azul chegue a ${targetArea}.`,
 };
@@ -104,13 +129,36 @@ const feedbackCorrectByGoal: Record<AreaGoal, (targetArea: number) => string> = 
   double: () => "|det(A)| = 2 → a área dobrou. O módulo do determinante é o fator de escala da área.",
   half: () => "|det(A)| = 0,5 → a área caiu pela metade.",
   zero: () =>
-    "|det(A)| = 0 → o quadrado perdeu a dimensão (virou uma linha ou ponto). É a mesma ideia de matriz singular, só que construída por você.",
+    "|det(A)| = 0 → o quadrado perdeu a dimensão (virou uma linha com comprimento). É a mesma ideia de matriz singular, só que construída por você.",
   free: targetArea =>
     `|det(A)| = ${targetArea} → esse é o fator de escala da área.`,
 };
 
 const FEEDBACK_INCORRECT =
   "Observe como a área do quadrado azul mudou enquanto você digitava. O módulo do determinante é exatamente o fator de escala da área.";
+
+const FEEDBACK_INCORRECT_NULL_MATRIX =
+  "Essa matriz também zera a área, mas reduz o quadrado a um único ponto, não a uma linha. Troque algum valor para que a figura ainda tenha comprimento em alguma direção.";
+
+/** The "zero" goal needs a specific nudge when the student lands exactly on
+ * the null matrix (the trivial, rank-0 "solution"), since the generic
+ * incorrect message wouldn't explain why that particular answer is rejected. */
+function incorrectFeedbackForZeroGoal(): string {
+  const matrix = useFillBlankMatrixInputStore
+    .getState()
+    .getMatrixById("matrix-a");
+  if (matrix) {
+    const [[a, b], [c, d]] = matrix.matrixValue;
+    const rawValues = [a.value, b.value, c.value, d.value];
+    if (!rawValues.some(isBlank)) {
+      const values = rawValues.map(Number);
+      if (!values.some(Number.isNaN) && isNullMatrix(values)) {
+        return FEEDBACK_INCORRECT_NULL_MATRIX;
+      }
+    }
+  }
+  return FEEDBACK_INCORRECT;
+}
 
 function createDeterminantAreaTargetAssignment({
   order,
@@ -134,7 +182,8 @@ function createDeterminantAreaTargetAssignment({
     subjectCategory: "determinants",
     feedback: {
       correct: feedbackCorrectByGoal[goal](targetArea),
-      incorrect: FEEDBACK_INCORRECT,
+      incorrect:
+        goal === "zero" ? incorrectFeedbackForZeroGoal : FEEDBACK_INCORRECT,
     },
     setup() {
       const { addPolygon } = useScene2DStore.getState();
@@ -147,7 +196,7 @@ function createDeterminantAreaTargetAssignment({
           polygonRefId: "polygon",
           type: MatrixType.IDENTITY,
           dimention: "2D",
-          liveStatLabel: makeLiveAreaStat(targetArea),
+          liveStatLabel: makeLiveAreaStat(targetArea, goal),
           matrixValue: [
             [
               { value: "", editable: true },
@@ -168,12 +217,23 @@ function createDeterminantAreaTargetAssignment({
       if (!matrix) return false;
 
       const [[a, b], [c, d]] = matrix.matrixValue;
-      const values = [a.value, b.value, c.value, d.value].map(Number);
+      const rawValues = [a.value, b.value, c.value, d.value];
+      if (rawValues.some(isBlank)) return false;
+
+      const values = rawValues.map(Number);
       if (values.some(value => Number.isNaN(value))) return false;
 
       const [av, bv, cv, dv] = values;
       const area = Math.abs(av * dv - bv * cv);
-      return Math.abs(area - targetArea) < AREA_TOLERANCE;
+      if (Math.abs(area - targetArea) >= AREA_TOLERANCE) return false;
+
+      // For "zero", reject the null matrix: it does zero the area, but
+      // collapses the square to a single point instead of a line segment
+      // with nonzero length — a trivial non-answer that doesn't teach
+      // anything about rank-1 matrices.
+      if (goal === "zero" && isNullMatrix(values)) return false;
+
+      return true;
     },
   };
 }

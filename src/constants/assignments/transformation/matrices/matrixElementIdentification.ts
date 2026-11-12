@@ -144,6 +144,9 @@ function createValueAtNotation(
     ...baseAssignment(order, title),
     instructions: `Observe a matriz A. Qual é o valor do elemento ${el} (linha ${targetRow}, coluna ${targetCol})?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `${el} é a linha ${targetRow}, coluna ${targetCol} de A. Conte as linhas de cima pra baixo e as colunas da esquerda pra direita.`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -180,6 +183,9 @@ function createRowOfValue(
     ...baseAssignment(order, title),
     instructions: `Na matriz A o valor ${probeValue} aparece uma única vez. Em que linha ele está?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Procure o valor ${probeValue} na matriz A. As linhas são contadas de cima pra baixo, começando em 1.`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -217,6 +223,9 @@ function createColumnOfValue(
     ...baseAssignment(order, title),
     instructions: `Na matriz A o valor ${probeValue} aparece uma única vez. Em que coluna ele está?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Procure o valor ${probeValue} na matriz A. As colunas são contadas da esquerda pra direita, começando em 1.`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -262,6 +271,9 @@ function createNotationOfValue(
     ...baseAssignment(order, title),
     instructions: `Na matriz A o valor ${probeValue} aparece uma única vez. Qual notação aᵢⱼ representa a posição dele (linha i, coluna j)?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Ache o valor ${probeValue} na matriz A: i é o número da linha, j é o número da coluna onde ele está.`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -304,6 +316,9 @@ function createMatrixOrder(
     ...baseAssignment(order, title),
     instructions: `Uma matriz de ordem m × n tem m linhas e n colunas. Qual é a ordem da matriz A?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Conte as linhas de A primeiro, depois as colunas: a ordem de uma matriz é sempre linhas × colunas, nessa ordem (nunca o contrário).`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -337,6 +352,12 @@ function createCountRowsOrCols(
     ...baseAssignment(order, title),
     instructions: `Quantas ${dimension} tem a matriz A?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect:
+        dimension === "linhas"
+          ? "Conte quantas fileiras horizontais a matriz A tem."
+          : "Conte quantas fileiras verticais a matriz A tem.",
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -370,6 +391,9 @@ function createDiagonalMembership(
     ...baseAssignment(order, title),
     instructions: `A diagonal principal é formada pelos elementos aᵢⱼ em que i = j. O elemento ${el} pertence à diagonal principal de A?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `${el} tem linha ${probeRow} e coluna ${probeCol}. Ele está na diagonal principal só se esses dois números forem iguais.`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -408,6 +432,9 @@ function createWhichIsOnDiagonal(
     ...baseAssignment(order, title),
     instructions: `Qual dos elementos abaixo está na diagonal principal de A (a posição em que a linha é igual à coluna)?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `A diagonal principal é a sequência a₁₁, a₂₂, a₃₃... Procure, entre as opções, qual posição tem o número da linha igual ao da coluna.`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -447,6 +474,9 @@ function createSymmetricValue(
     ...baseAssignment(order, title),
     instructions: `O simétrico de ${el} em relação à diagonal principal é ${symmetricEl} (troca-se a linha pela coluna). Qual é o valor de ${symmetricEl} em A?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `${symmetricEl} fica na linha ${probeCol}, coluna ${probeRow} (a linha e a coluna de ${el} trocadas). Releia essa posição em A.`,
+    },
     setup() {
       showMatrixA(matrixA);
       const { setSentence, setOptions } =
@@ -477,6 +507,9 @@ function createReplaceCellValue(
     ...baseAssignment(order, title),
     instructions: `Na matriz A, troque o valor do elemento ${el} (linha ${targetRow}, coluna ${targetCol}) por ${replacement}. As demais células ficam como estão.`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: `Só a célula ${el} (linha ${targetRow}, coluna ${targetCol}) deve virar ${replacement}. Confira se alguma outra célula também mudou, ou se ${el} ainda não tem o valor certo.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         {
@@ -533,6 +566,9 @@ function createSwapCells(
     ...baseAssignment(order, title),
     instructions: `Troque os valores das posições ${elA} e ${elB} de A. As demais células ficam como estão.`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: `Troque SÓ os valores de ${elA} e ${elB} entre si (um vai para o lugar do outro). As demais células devem ficar exatamente como estavam.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         {

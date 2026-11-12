@@ -1,5 +1,15 @@
 import { Vector3 } from "three";
 
+type FeedbackText = string | (() => string);
+
+/** Resolves a feedback field that may be a plain string or a function called
+ * at render time (for feedback that depends on live store state, e.g. which
+ * wrong option was picked). */
+export function resolveFeedback(text: FeedbackText | undefined): string | undefined {
+  if (typeof text === "function") return text();
+  return text;
+}
+
 export function getRandomIntInRange(min: number, max: number): number {
   // Swap min and max if they're in the wrong order
   const [realMin, realMax] = min <= max ? [min, max] : [max, min];
