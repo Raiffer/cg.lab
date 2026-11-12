@@ -9,6 +9,11 @@ interface ObjectivePanel3DProps {
   mirrorMainScene?: boolean;
   projectionMode?: "parallel" | "perspective";
   extendNegativeZGrid?: boolean;
+  // "floating": janela flutuante no canto superior direito (padrão)
+  // "fill": ocupa todo o container pai, sem botão de minimizar
+  layout?: "floating" | "fill";
+  // Título do cabeçalho; por padrão "Cena principal" ou "Objetivo"
+  title?: string;
 }
 
 export default function ObjectivePanel3D({
@@ -16,43 +21,55 @@ export default function ObjectivePanel3D({
   mirrorMainScene = false,
   projectionMode = "parallel",
   extendNegativeZGrid = false,
+  layout = "floating",
+  title,
 }: ObjectivePanel3DProps) {
   const { cubes, objectiveCubes, projectionCubes } = useScene3DStore();
   const displayCubes = mirrorMainScene ? cubes : objectiveCubes;
   const displayProjectionCubes = mirrorMainScene
     ? projectionCubes[projectionMode]
     : [];
-  const [isOpen, setIsOpen] = useState(true);
+  const [isPanelOpen, setIsOpen] = useState(true);
+  const isFill = layout === "fill";
+  const isOpen = isFill || isPanelOpen;
 
   if (!displayCubes.length && !displayProjectionCubes.length) return null;
 
   return (
     <div
-      className={`absolute top-4 right-4 border-2 border-gray-400 bg-black rounded-sm overflow-hidden w-[30%] transition-[max-height] duration-300 ${
-        isOpen ? "max-h-72" : "max-h-14"
-      }`}
+      className={
+        isFill
+          ? "flex h-full w-full flex-col bg-black"
+          : `absolute top-4 right-4 border-2 border-gray-400 bg-black rounded-sm overflow-hidden w-[30%] transition-[max-height] duration-300 ${
+              isOpen ? "max-h-72" : "max-h-14"
+            }`
+      }
     >
       <div
         className={`${
           isOpen && "border-b-2"
-        } border-gray-400 text-white px-4 py-2 bg-zinc-900 flex items-center justify-between`}
+        } border-gray-400 text-white px-4 py-2 bg-zinc-900 flex items-center ${
+          isFill ? "justify-end" : "justify-between"
+        }`}
       >
         <h1 className="font-semibold">
-          {mirrorMainScene ? "Cena principal" : "Objetivo"}
+          {title ?? (mirrorMainScene ? "Cena principal" : "Objetivo")}
         </h1>
-        <button
-          type="button"
-          aria-label={isOpen ? "Minimizar janela" : "Expandir janela"}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen(open => !open)}
-          className="rounded p-1 transition-transform"
-          style={{ transform: isOpen ? "rotate(0deg)" : "rotate(180deg)" }}
-        >
-          <ChevronDown aria-hidden="true" className="cursor-pointer" />
-        </button>
+        {!isFill && (
+          <button
+            type="button"
+            aria-label={isOpen ? "Minimizar janela" : "Expandir janela"}
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen(open => !open)}
+            className="rounded p-1 transition-transform"
+            style={{ transform: isOpen ? "rotate(0deg)" : "rotate(180deg)" }}
+          >
+            <ChevronDown aria-hidden="true" className="cursor-pointer" />
+          </button>
+        )}
       </div>
       <div
-        className={`w-full h-56 ${
+        className={`w-full ${isFill ? "min-h-0 flex-1" : "h-56"} ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
         aria-hidden={!isOpen}

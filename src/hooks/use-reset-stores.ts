@@ -6,6 +6,7 @@ import { useFillBlankMatrixInputStore } from "@/store/fillInBlankMatrixInputStor
 import { useFillInMatrixWithOptionsStore } from "@/store/fillInMatrixWithOptions";
 import { useFillInVecLengthFormulaStore } from "@/store/fillInVecLengthFormulaStore";
 import { useOrderMatrixStore } from "@/store/orderMatrixMultiplicationStore";
+import { useMultipleChoiceStore } from "@/store/multipleChoiceStore";
 
 export function useResetStores() {
   const { reset: resetScene2D } = useScene2DStore();
@@ -18,6 +19,7 @@ export function useResetStores() {
   const { reset: resetFillInVecLengthFormulaStore } =
     useFillInVecLengthFormulaStore();
   const { reset: resetOrderMatrix } = useOrderMatrixStore();
+  const { reset: resetMultipleChoice } = useMultipleChoiceStore();
 
   const resetAll = useCallback(() => {
     resetScene2D();
@@ -27,6 +29,7 @@ export function useResetStores() {
     resetFillInMatrixWithOptions();
     resetFillInVecLengthFormulaStore();
     resetOrderMatrix();
+    resetMultipleChoice();
   }, [
     resetScene2D,
     resetScene3D,
@@ -35,6 +38,7 @@ export function useResetStores() {
     resetFillInMatrixWithOptions,
     resetFillInVecLengthFormulaStore,
     resetOrderMatrix,
+    resetMultipleChoice,
   ]);
 
   return resetAll;

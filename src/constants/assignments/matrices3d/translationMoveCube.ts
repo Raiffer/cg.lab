@@ -10,6 +10,10 @@ interface TranslationMoveCubeProps {
   targetTranslation: Vector3;
 }
 
+// Dica mostrada quando a questão exige mover o cubo no eixo Y
+const yAxisHint = (translation: Vector3) =>
+  translation.y !== 0 ? " Segure Shift para mover no eixo Y." : "";
+
 function createTranslationMoveCubeAssignment({
   order,
   title,
@@ -23,7 +27,7 @@ function createTranslationMoveCubeAssignment({
     title: title || "Mova o cubo no ambiente 3D",
     instructions:
       instructions ||
-      `Aplique a translação (${targetTranslation.x}, ${targetTranslation.y}, ${targetTranslation.z}).`,
+      `Aplique a translação (${targetTranslation.x}, ${targetTranslation.y}, ${targetTranslation.z}).${yAxisHint(targetTranslation)}`,
     order,
     type: AssignmentType.INTERACTIVE,
     subjectCategory: "translation",
@@ -90,6 +94,38 @@ const translationMoveCubeAssignmentsProps: TranslationMoveCubeProps[] = [
     title: "Translação negativa nos eixos X e Z",
     initialCubeProps: { position: new Vector3(1, 0, 1) },
     targetTranslation: new Vector3(-1, 0, -1),
+  },
+  {
+    order: 5,
+    title: "Mover no eixo Y",
+    initialCubeProps: { position: new Vector3(0, 0, 0) },
+    targetTranslation: new Vector3(0, 2, 0),
+  },
+  {
+    order: 6,
+    title: "Mover nos três eixos",
+    initialCubeProps: { position: new Vector3(0, 0, 0) },
+    targetTranslation: new Vector3(2, 1, -3),
+  },
+  {
+    order: 7,
+    title: "Translação longa e negativa",
+    // posição final = (-3, 0, -2)
+    initialCubeProps: { position: new Vector3(3, 0, 3) },
+    targetTranslation: new Vector3(-6, 0, -5),
+  },
+  {
+    order: 8,
+    title: "Translação com valores fracionários",
+    initialCubeProps: { position: new Vector3(0, 0, 0) },
+    targetTranslation: new Vector3(1.5, 0, -2.5),
+  },
+  {
+    order: 9,
+    title: "Descer o cubo até o chão",
+    // posição final = (1, 0, 3)
+    initialCubeProps: { position: new Vector3(1, 3, 1) },
+    targetTranslation: new Vector3(0, -3, 2),
   },
 ];
 

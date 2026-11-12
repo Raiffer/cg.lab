@@ -107,3 +107,45 @@ export function isCubeInsidePerspectiveProjection(
 
   return true;
 }
+
+// Alguma parte do cubo pode estar dentro do volume em perspectiva.
+// Retorna false quando todos os vértices do cubo ficam do lado de fora de um
+// mesmo plano do volume (near, far, esquerda, direita, baixo ou cima).
+export function doesCubeIntersectPerspectiveProjection(
+  position: Vector3,
+  size: Vector3,
+  projection: PerspectiveProjectionParameters,
+  volumePosition: Vector3
+): boolean {
+  const halfSize = size.clone().multiplyScalar(0.5);
+  const localPosition = position.clone().sub(volumePosition);
+  const halfDepth = (projection.far - projection.near) / 2;
+
+  const corners: Vector3[] = [];
+  for (const xSide of [-1, 1]) {
+    for (const ySide of [-1, 1]) {
+      for (const zSide of [-1, 1]) {
+        corners.push(
+          new Vector3(
+            localPosition.x + xSide * halfSize.x,
+            localPosition.y + ySide * halfSize.y,
+            localPosition.z + zSide * halfSize.z
+          )
+        );
+      }
+    }
+  }
+
+  // Cada teste retorna true quando o vértice está fora daquele plano
+  const scaleAt = (z: number) => (projection.near + halfDepth - z) / projection.near;
+  const outsideTests: ((corner: Vector3) => boolean)[] = [
+    corner => corner.z > halfDepth, // antes do plano near
+    corner => corner.z < -halfDepth, // depois do plano far
+    corner => corner.x < projection.left * scaleAt(corner.z),
+    corner => corner.x > projection.right * scaleAt(corner.z),
+    corner => corner.y < projection.bottom * scaleAt(corner.z),
+    corner => corner.y > projection.top * scaleAt(corner.z),
+  ];
+
+  return !outsideTests.some(isOutside => corners.every(isOutside));
+}

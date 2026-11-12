@@ -1,9 +1,9 @@
-import { parallelAssignment } from "./parallelAssignment";
-import { perspectiveAssignment } from "./perspectiveAssignment";
+import { parallelAssignmentList } from "./parallelAssignment";
 import { perspectiveAssignmentV2AssignmentList } from "./perspectiveAssignmentV2";
+import { projectionMultipleChoiceAssignmentList } from "./projectionMultipleChoiceAssignment";
 
 export const projectionAssignments = [
-  parallelAssignment,
-  perspectiveAssignment,
+  ...parallelAssignmentList,
   ...perspectiveAssignmentV2AssignmentList,
+  ...projectionMultipleChoiceAssignmentList,
 ];

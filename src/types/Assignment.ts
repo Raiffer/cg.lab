@@ -10,6 +10,9 @@ export enum AssignmentType {
   FILL_IN_THE_BLANK_MATRIX = "FILL_IN_THE_BLANK_MATRIX",
   FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS = "FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS",
   FILL_IN_THE_BLANK_FORMULA = "FILL_IN_THE_BLANK_FORMULA",
+  // Questão fechada de projeção: só a cena principal, sem interação,
+  // e o aluno escolhe uma alternativa
+  PROJECTION_MULTIPLE_CHOICE = "PROJECTION_MULTIPLE_CHOICE",
 }
 
 export interface SliderConfig {
