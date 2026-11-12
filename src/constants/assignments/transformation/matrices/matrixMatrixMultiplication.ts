@@ -12,11 +12,9 @@ import { shuffleArray } from "@/utils";
 
 /**
  * "Multiplicação de matrizes" — 6 exercícios sobre a MECÂNICA de A · B
- * (regra linha-vezes-coluna): nada disso existia antes — o que já tinha
- * (orderingMatrices) assume que o aluno já sabe multiplicar e foca em COMPOR
- * transformações geométricas conhecidas numa forma da cena. Aqui A e B são
- * matrizes numéricas quaisquer — sem plano cartesiano (`hideCanvas: true`),
- * mesmo cartão branco centralizado dos outros exercícios de fundamentos.
+ * (regra linha-vezes-coluna). Aqui A e B são matrizes numéricas quaisquer —
+ * sem plano cartesiano (`hideCanvas: true`), mesmo cartão branco
+ * centralizado dos outros exercícios de fundamentos.
  *
  * Progressão de dificuldade:
  *   1  o caso mais simples possível: linha (1x2) vezes coluna (2x1) = um

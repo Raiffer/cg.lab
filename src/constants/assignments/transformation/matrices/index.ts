@@ -15,7 +15,6 @@ import { matrixMatrixMultiplicationAssignmentList } from "./matrixMatrixMultipli
 import { matrixScalarMultiplicationAssignmentList } from "./matrixScalarMultiplication";
 import { matrixSingularityPredictionAssignmentList } from "./matrixSingularityPrediction";
 import { matrixSumSubtractionGapAssignmentList } from "./matrixSumSubtractionGap";
-import { orderingMatricesAssignments } from "./orderingMatrices";
 import { pivotMultiplierAssignmentList } from "./pivotMultiplier";
 import { rotationMatrixFillInBlankAssignments } from "./rotationMatrixFillInBlank";
 import { rotationMatrixFillInWithOptionsAssignments } from "./rotationMatrixFillInWithOptions";
@@ -28,13 +27,12 @@ import { translationMatrix2dAssignmentList } from "./translationMatrix";
 
 export const matricesAssignments = [
   // Matrix Fundamentals Assignments (element reading, sum/subtraction gap,
-  // then multiplication — scalar first, then matrix-matrix, then ordering
-  // the factors to compose transformations — increasing difficulty)
+  // then multiplication — scalar first, then matrix-matrix — increasing
+  // difficulty)
   ...matrixElementIdentificationAssignmentList,
   ...matrixSumSubtractionGapAssignmentList,
   ...matrixScalarMultiplicationAssignmentList,
   ...matrixMatrixMultiplicationAssignmentList,
-  ...orderingMatricesAssignments,
 
   // Determinant Assignments (the student hasn't seen a determinant before,
   // so start with the actual calculation first — only once they know what a
