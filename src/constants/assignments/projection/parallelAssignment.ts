@@ -5,6 +5,7 @@ import {
   doesCubeIntersectParallelProjection,
   isCubeInsideParallelProjection,
 } from "@/lib/parallel-projection";
+import { createVolumeYRotationSlider } from "./volumeRotationSlider";
 
 interface ParallelAssignmentObject {
   position: Vector3;
@@ -22,6 +23,11 @@ interface ParallelAssignmentConfig {
   exclude?: ParallelAssignmentObject[];
   // Proporção inicial (largura, altura, profundidade) do volume
   volumeSize?: Vector3;
+  // Rotação do volume em graus (Euler XYZ) em torno do próprio centro.
+  // A visualização da projeção e os handles giram junto com ele.
+  volumeRotation?: Vector3;
+  // Mostra uma barra para o aluno girar o volume em torno do eixo Y
+  allowVolumeRotation?: boolean;
 }
 
 interface ParallelAssignmentsProps {
@@ -29,6 +35,10 @@ interface ParallelAssignmentsProps {
   title?: string;
   // Proporção inicial usada quando a questão não define a sua
   volumeSize?: Vector3;
+  // Rotação usada quando a questão não define a sua
+  volumeRotation?: Vector3;
+  // Valor usado quando a questão não define o seu
+  allowVolumeRotation?: boolean;
   assignments: ParallelAssignmentConfig[];
 }
 
@@ -39,6 +49,7 @@ interface SingleParallelAssignmentProps extends ParallelAssignmentConfig {
 
 const initialVolumePosition = new Vector3(0, 2, 0);
 const defaultVolumeSize = new Vector3(6, 4, 6);
+const defaultVolumeRotation = new Vector3(0, 0, 0);
 const defaultCubeSize = new Vector3(1, 1, 1);
 
 function createParallelAssignment({
@@ -48,6 +59,8 @@ function createParallelAssignment({
   include,
   exclude = [],
   volumeSize = defaultVolumeSize,
+  volumeRotation = defaultVolumeRotation,
+  allowVolumeRotation = false,
 }: SingleParallelAssignmentProps): Assignment {
   const volumeId = `projection-parallel-volume-${order}`;
   // A primeira questão mantém o id antigo para preservar conclusões salvas
@@ -74,6 +87,9 @@ function createParallelAssignment({
     type: AssignmentType.INTERACTIVE,
     subjectCategory: "projection",
     projectionMode: "parallel",
+    ...(allowVolumeRotation && {
+      slider: createVolumeYRotationSlider("parallel", volumeId, volumeRotation),
+    }),
     setup() {
       const { addCube, addProjectionCube } = useScene3DStore.getState();
 
@@ -96,6 +112,7 @@ function createParallelAssignment({
         color: "#38bdf8",
         translation: new Vector3(0, 0, 0),
         scale: new Vector3(1, 1, 1),
+        rotation: volumeRotation.clone(),
       });
     },
     validate() {
@@ -110,13 +127,15 @@ function createParallelAssignment({
       const volumeSize = projectionCube.size
         .clone()
         .multiply(projectionCube.scale);
+      const rotation = projectionCube.rotation;
 
       const allIncludedInside = include.every(object =>
         isCubeInsideParallelProjection(
           object.position,
           object.size ?? defaultCubeSize,
           volumePosition,
-          volumeSize
+          volumeSize,
+          rotation
         )
       );
       const allExcludedOutside = exclude.every(
@@ -125,7 +144,8 @@ function createParallelAssignment({
             object.position,
             object.size ?? defaultCubeSize,
             volumePosition,
-            volumeSize
+            volumeSize,
+            rotation
           )
       );
 
@@ -138,11 +158,15 @@ function createParallelAssignments({
   order,
   title,
   volumeSize,
+  volumeRotation,
+  allowVolumeRotation,
   assignments,
 }: ParallelAssignmentsProps): Assignment[] {
   return assignments.map((assignment, index) =>
     createParallelAssignment({
       volumeSize,
+      volumeRotation,
+      allowVolumeRotation,
       ...assignment,
       order: order + index,
       title,
@@ -156,7 +180,9 @@ const parallelAssignmentConfigs: ParallelAssignmentConfig[] = [
     // Largo e raso: x ∈ [-5, 5], y ∈ [0, 4], z ∈ [-2, 2]
     instructions:
       "Redimensione o volume de projeção até que o cubo vermelho fique completamente dentro dele.",
-    volumeSize: new Vector3(10, 4, 4),
+    volumeSize: new Vector3(10, 10, 10),
+    volumeRotation: new Vector3(0, 0, 0),
+    allowVolumeRotation: true,
     include: [{ position: new Vector3(-2, 1, -6), color: "red" }],
   },
   {
@@ -199,6 +225,7 @@ const parallelAssignmentConfigs: ParallelAssignmentConfig[] = [
     instructions:
       "Deixe apenas o cubo laranja dentro do volume de projeção. Os cubos amarelo e azul devem ficar de fora.",
     volumeSize: new Vector3(12, 6, 2),
+    volumeRotation: new Vector3(0, 15, 0),
     include: [{ position: new Vector3(4, 2, -4), color: "orange" }],
     exclude: [
       { position: new Vector3(0, 2, 0), color: "yellow" },

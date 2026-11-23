@@ -7,8 +7,9 @@ import {
 } from "@/lib/perspective-projection";
 import { useThree } from "@react-three/fiber";
 import { useMemo } from "react";
-import { BufferGeometry, Float32BufferAttribute } from "three";
+import { BufferGeometry, Float32BufferAttribute, Vector3 } from "three";
 import ProjectionCube, {
+  moveProjectionCubeCenter,
   type ProjectionCubeResizeContext,
 } from "./projection-cube";
 
@@ -88,7 +89,13 @@ function createPerspectiveFrustumGeometry(
 
   geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
   geometry.computeVertexNormals();
-  return { geometry, size };
+  const nearCorners = [
+    vertices.nearLeftBottom,
+    vertices.nearRightBottom,
+    vertices.nearRightTop,
+    vertices.nearLeftTop,
+  ].map(([x, y, z]) => new Vector3(x, y, z));
+  return { geometry, size, nearCorners };
 }
 
 function resizePerspectiveCube(
@@ -114,7 +121,7 @@ function resizePerspectiveCube(
   }
 
   let nextProjection = projection;
-  const nextPosition = startPosition.clone();
+  let nextPosition = startPosition.clone();
 
   if (axis === "z") {
     const axisIndex = 2;
@@ -129,8 +136,10 @@ function resizePerspectiveCube(
     const nextDepth = Math.max(0.5, Math.min(maxDepth, requestedDepth));
     const nextMovingFace =
       fixedFace + side * nextDepth * cube.scale.getComponent(axisIndex);
-    const nextCenter = (fixedFace + nextMovingFace) / 2;
-    nextPosition.setZ(nextCenter - cube.translation.z);
+    nextPosition = moveProjectionCubeCenter(
+      context,
+      (fixedFace + nextMovingFace) / 2
+    );
     const nextNear =
       side > 0 ? Math.max(0.1, projection.far - nextDepth) : projection.near;
     const nextFar =
@@ -258,6 +267,9 @@ export default function PerspectiveCube({
       geometry={frustum.geometry}
       sideHandlesDepth={-frustum.size.z / 2}
       onResize={context => resizePerspectiveCube(context, aspect)}
+      // A câmera fica no ápice do volume, a uma distância near do plano near
+      cameraDepth={frustum.size.z / 2 + projection.near}
+      cameraRayTargets={frustum.nearCorners}
     />
   );
 }

@@ -1,4 +1,9 @@
 import { MathUtils, Vector3 } from "three";
+import {
+  getCubeCorners,
+  getProjectionVolumeQuaternion,
+  toProjectionVolumeLocal,
+} from "./projection-volume";
 
 export interface PerspectiveProjectionParameters {
   definition: "fov" | "bounds";
@@ -72,80 +77,129 @@ export function getPerspectiveFrustumSize(
   );
 }
 
+const EPSILON = 1e-6;
+
+// Vértices do cubo no sistema local do volume (que pode estar girado)
+function getLocalCubeCorners(
+  position: Vector3,
+  size: Vector3,
+  volumePosition: Vector3,
+  volumeRotation?: Vector3
+) {
+  return getCubeCorners(position, size).map(corner =>
+    toProjectionVolumeLocal(corner, volumePosition, volumeRotation)
+  );
+}
+
 export function isCubeInsidePerspectiveProjection(
   position: Vector3,
   size: Vector3,
   projection: PerspectiveProjectionParameters,
-  volumePosition: Vector3
+  volumePosition: Vector3,
+  volumeRotation?: Vector3
 ): boolean {
-  const halfSize = size.clone().multiplyScalar(0.5);
-  const localPosition = position.clone().sub(volumePosition);
   const halfDepth = (projection.far - projection.near) / 2;
 
-  for (const xSide of [-1, 1]) {
-    for (const ySide of [-1, 1]) {
-      for (const zSide of [-1, 1]) {
-        const x = localPosition.x + xSide * halfSize.x;
-        const y = localPosition.y + ySide * halfSize.y;
-        const z = localPosition.z + zSide * halfSize.z;
+  return getLocalCubeCorners(
+    position,
+    size,
+    volumePosition,
+    volumeRotation
+  ).every(({ x, y, z }) => {
+    if (z < -halfDepth - EPSILON || z > halfDepth + EPSILON) return false;
 
-        if (z < -halfDepth || z > halfDepth) return false;
-
-        const distanceFromCamera = projection.near + halfDepth - z;
-        const scale = distanceFromCamera / projection.near;
-        if (
-          x < projection.left * scale ||
-          x > projection.right * scale ||
-          y < projection.bottom * scale ||
-          y > projection.top * scale
-        ) {
-          return false;
-        }
-      }
-    }
-  }
-
-  return true;
+    const distanceFromCamera = projection.near + halfDepth - z;
+    const scale = distanceFromCamera / projection.near;
+    return (
+      x >= projection.left * scale - EPSILON &&
+      x <= projection.right * scale + EPSILON &&
+      y >= projection.bottom * scale - EPSILON &&
+      y <= projection.top * scale + EPSILON
+    );
+  });
 }
 
-// Alguma parte do cubo pode estar dentro do volume em perspectiva.
-// Retorna false quando todos os vértices do cubo ficam do lado de fora de um
-// mesmo plano do volume (near, far, esquerda, direita, baixo ou cima).
-export function doesCubeIntersectPerspectiveProjection(
-  position: Vector3,
-  size: Vector3,
+// Vértices do volume em perspectiva, no mundo
+function getPerspectiveVolumeCorners(
   projection: PerspectiveProjectionParameters,
-  volumePosition: Vector3
-): boolean {
-  const halfSize = size.clone().multiplyScalar(0.5);
-  const localPosition = position.clone().sub(volumePosition);
+  volumePosition: Vector3,
+  volumeRotation?: Vector3
+) {
   const halfDepth = (projection.far - projection.near) / 2;
-
+  const farScale = projection.far / projection.near;
+  const quaternion = getProjectionVolumeQuaternion(volumeRotation);
   const corners: Vector3[] = [];
-  for (const xSide of [-1, 1]) {
-    for (const ySide of [-1, 1]) {
-      for (const zSide of [-1, 1]) {
+
+  for (const [z, scale] of [
+    [halfDepth, 1],
+    [-halfDepth, farScale],
+  ]) {
+    for (const x of [projection.left, projection.right]) {
+      for (const y of [projection.bottom, projection.top]) {
         corners.push(
-          new Vector3(
-            localPosition.x + xSide * halfSize.x,
-            localPosition.y + ySide * halfSize.y,
-            localPosition.z + zSide * halfSize.z
-          )
+          new Vector3(x * scale, y * scale, z)
+            .applyQuaternion(quaternion)
+            .add(volumePosition)
         );
       }
     }
   }
 
-  // Cada teste retorna true quando o vértice está fora daquele plano
-  const scaleAt = (z: number) => (projection.near + halfDepth - z) / projection.near;
-  const outsideTests: ((corner: Vector3) => boolean)[] = [
-    corner => corner.z > halfDepth, // antes do plano near
-    corner => corner.z < -halfDepth, // depois do plano far
-    corner => corner.x < projection.left * scaleAt(corner.z),
-    corner => corner.x > projection.right * scaleAt(corner.z),
-    corner => corner.y < projection.bottom * scaleAt(corner.z),
-    corner => corner.y > projection.top * scaleAt(corner.z),
-  ];
+  return corners;
+}
 
-  return !outsideTests.some(isOutside => corners.every(isOutside));
+// Alguma parte do cubo pode estar dentro do volume em perspectiva.
+// Retorna false quando todos os vértices do cubo ficam do lado de fora de um
+// mesmo plano do volume (near, far, esquerda, direita, baixo ou cima), ou
+// quando todos os vértices do volume ficam do lado de fora de uma mesma face
+// do cubo.
+export function doesCubeIntersectPerspectiveProjection(
+  position: Vector3,
+  size: Vector3,
+  projection: PerspectiveProjectionParameters,
+  volumePosition: Vector3,
+  volumeRotation?: Vector3
+): boolean {
+  const halfDepth = (projection.far - projection.near) / 2;
+  const corners = getLocalCubeCorners(
+    position,
+    size,
+    volumePosition,
+    volumeRotation
+  );
+
+  // Cada teste retorna true quando o vértice está fora daquele plano
+  const scaleAt = (z: number) =>
+    (projection.near + halfDepth - z) / projection.near;
+  const outsideTests: ((corner: Vector3) => boolean)[] = [
+    corner => corner.z >= halfDepth - EPSILON, // antes do plano near
+    corner => corner.z <= -halfDepth + EPSILON, // depois do plano far
+    corner => corner.x <= projection.left * scaleAt(corner.z) + EPSILON,
+    corner => corner.x >= projection.right * scaleAt(corner.z) - EPSILON,
+    corner => corner.y <= projection.bottom * scaleAt(corner.z) + EPSILON,
+    corner => corner.y >= projection.top * scaleAt(corner.z) - EPSILON,
+  ];
+  if (outsideTests.some(isOutside => corners.every(isOutside))) return false;
+
+  // Faces do cubo (alinhadas aos eixos do mundo) como planos separadores
+  const volumeCorners = getPerspectiveVolumeCorners(
+    projection,
+    volumePosition,
+    volumeRotation
+  );
+  const halfSize = new Vector3(
+    Math.abs(size.x),
+    Math.abs(size.y),
+    Math.abs(size.z)
+  ).multiplyScalar(0.5);
+  const separatedByCubeFace = [0, 1, 2].some(axis => {
+    const min = position.getComponent(axis) - halfSize.getComponent(axis);
+    const max = position.getComponent(axis) + halfSize.getComponent(axis);
+    return (
+      volumeCorners.every(corner => corner.getComponent(axis) <= min + EPSILON) ||
+      volumeCorners.every(corner => corner.getComponent(axis) >= max - EPSILON)
+    );
+  });
+
+  return !separatedByCubeFace;
 }

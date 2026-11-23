@@ -5,6 +5,7 @@ import {
   doesCubeIntersectPerspectiveProjection,
   isCubeInsidePerspectiveProjection,
 } from "@/lib/perspective-projection";
+import { createVolumeYRotationSlider } from "./volumeRotationSlider";
 
 interface PerspectiveAssignmentObject {
   position: Vector3;
@@ -33,11 +34,20 @@ interface PerspectiveAssignmentConfig {
   exclude?: PerspectiveAssignmentObject[];
   // Volume inicial; o que não for informado usa o padrão
   volume?: Partial<PerspectiveVolumeBounds>;
+  // Rotação do volume em graus (Euler XYZ) em torno do próprio centro.
+  // A visualização da projeção e os handles giram junto com ele.
+  volumeRotation?: Vector3;
+  // Mostra uma barra para o aluno girar o volume em torno do eixo Y
+  allowVolumeRotation?: boolean;
 }
 
 interface PerspectiveAssignmentsProps {
   order: number;
   title?: string;
+  // Rotação usada quando a questão não define a sua
+  volumeRotation?: Vector3;
+  // Valor usado quando a questão não define o seu
+  allowVolumeRotation?: boolean;
   assignments: PerspectiveAssignmentConfig[];
 }
 
@@ -62,6 +72,7 @@ const defaultVolume: PerspectiveVolumeBounds = {
   top: 3,
 };
 const defaultCubeSize = new Vector3(1, 1, 1);
+const defaultVolumeRotation = new Vector3(0, 0, 0);
 
 function createPerspectiveAssignment({
   order,
@@ -70,6 +81,8 @@ function createPerspectiveAssignment({
   include,
   exclude = [],
   volume,
+  volumeRotation = defaultVolumeRotation,
+  allowVolumeRotation = false,
 }: SinglePerspectiveAssignmentProps): Assignment {
   const volumeId = `projection-perspective-v2-volume-${order}`;
   // A primeira questão mantém o id antigo para preservar conclusões salvas
@@ -99,6 +112,9 @@ function createPerspectiveAssignment({
     type: AssignmentType.INTERACTIVE,
     subjectCategory: "projection",
     projectionMode: "perspective",
+    ...(allowVolumeRotation && {
+      slider: createVolumeYRotationSlider("perspective", volumeId, volumeRotation),
+    }),
     setup() {
       const { addCube, addPerspectiveCubeFromBounds } =
         useScene3DStore.getState();
@@ -120,6 +136,7 @@ function createPerspectiveAssignment({
           id: volumeId,
           position: initialVolumePosition.clone(),
           color: "#38bdf8",
+          rotation: volumeRotation.clone(),
         },
         bounds.near,
         bounds.far,
@@ -139,13 +156,15 @@ function createPerspectiveAssignment({
       const volumePosition = projectionCube.position
         .clone()
         .add(projectionCube.translation);
+      const rotation = projectionCube.rotation;
 
       const allIncludedInside = include.every(object =>
         isCubeInsidePerspectiveProjection(
           object.position,
           object.size ?? defaultCubeSize,
           projection,
-          volumePosition
+          volumePosition,
+          rotation
         )
       );
       const allExcludedOutside = exclude.every(
@@ -154,7 +173,8 @@ function createPerspectiveAssignment({
             object.position,
             object.size ?? defaultCubeSize,
             projection,
-            volumePosition
+            volumePosition,
+            rotation
           )
       );
 
@@ -166,10 +186,14 @@ function createPerspectiveAssignment({
 function createPerspectiveAssignments({
   order,
   title,
+  volumeRotation,
+  allowVolumeRotation,
   assignments,
 }: PerspectiveAssignmentsProps): Assignment[] {
   return assignments.map((assignment, index) =>
     createPerspectiveAssignment({
+      volumeRotation,
+      allowVolumeRotation,
       ...assignment,
       order: order + index,
       title,

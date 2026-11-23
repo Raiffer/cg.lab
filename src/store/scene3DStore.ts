@@ -41,6 +41,8 @@ export type TProjectionCube = {
   size: Vector3;
   perspectiveProjection?: PerspectiveProjectionParameters;
   scale: Vector3;
+  // Rotação em graus (Euler XYZ) em torno do centro do volume
+  rotation?: Vector3;
   color: string;
 };
 
@@ -95,7 +97,7 @@ interface Scene3DStore {
     fovDegrees: number
   ) => void;
   addPerspectiveCubeFromBounds: (
-    cube: Pick<TProjectionCube, "id" | "position" | "color">,
+    cube: Pick<TProjectionCube, "id" | "position" | "color" | "rotation">,
     near: number,
     far: number,
     left: number,
@@ -114,6 +116,11 @@ interface Scene3DStore {
     size: Vector3,
     position: Vector3,
     perspectiveProjection?: PerspectiveProjectionParameters
+  ) => void;
+  rotateProjectionCube: (
+    mode: ProjectionMode,
+    id: string,
+    rotation: Vector3
   ) => void;
   setCubeInteractionMode: (id: string, mode: CubeInteractionMode) => void;
   setCubeCustomYRotationMatrix: (id: string, matrix: Matrix4 | null) => void;
@@ -316,6 +323,17 @@ export const useScene3DStore = create<Scene3DStore>((set, get) => ({
                 ...(perspectiveProjection && { perspectiveProjection }),
               }
             : cube
+        ),
+      },
+    }));
+  },
+  rotateProjectionCube: (mode, id, rotation) => {
+    set(state => ({
+      ...state,
+      projectionCubes: {
+        ...state.projectionCubes,
+        [mode]: state.projectionCubes[mode].map(cube =>
+          cube.id === id ? { ...cube, rotation: rotation.clone() } : cube
         ),
       },
     }));

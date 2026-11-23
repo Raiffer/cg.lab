@@ -103,8 +103,12 @@ export default function AssignmentNotAnswered({
         <FillInTheBlankWithOptions />
       )}
 
-      {assignment?.type === AssignmentType.SLIDER && assignment && (
-        <SliderAssignment assignment={assignment} />
+      {/* Questões interativas também podem ter uma barra (ex.: girar o
+          volume de projeção) */}
+      {(assignment?.type === AssignmentType.SLIDER ||
+        (assignment?.type === AssignmentType.INTERACTIVE &&
+          assignment.slider)) && (
+        <SliderAssignment key={assignment.id} assignment={assignment} />
       )}
 
       {matrices.map(matrix => (

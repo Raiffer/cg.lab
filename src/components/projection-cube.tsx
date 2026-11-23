@@ -1,11 +1,15 @@
-import { Edges } from "@react-three/drei";
+import { Edges, Line } from "@react-three/drei";
 import type { ThreeEvent } from "@react-three/fiber";
 import {
   type ProjectionMode,
   type TProjectionCube,
   useScene3DStore,
 } from "@/store/scene3DStore";
-import { useRef } from "react";
+import {
+  getProjectionVolumeEuler,
+  getProjectionVolumeQuaternion,
+} from "@/lib/projection-volume";
+import { useMemo, useRef } from "react";
 import { BufferGeometry, DoubleSide, Plane, Vector3 } from "three";
 
 type ResizeAxis = "x" | "y" | "z";
@@ -15,6 +19,9 @@ export interface ProjectionCubeResizeContext {
   axis: ResizeAxis;
   side: -1 | 1;
   faceDelta: number;
+  // Direção (no mundo) do eixo local do volume que está sendo redimensionado.
+  // fixedFace/movingFace são medidos ao longo dela.
+  axisDirection: Vector3;
   fixedFace: number;
   movingFace: number;
   startPosition: Vector3;
@@ -37,6 +44,11 @@ interface ProjectionCubeProps {
   sideHandlesDepth?: number;
   positionOffset?: Vector3;
   onResize?: (context: ProjectionCubeResizeContext) => void;
+  // Posição z (local, sem escala) da câmera. Padrão: logo à frente da face
+  // de projeção, como numa projeção paralela.
+  cameraDepth?: number;
+  // Pontos locais ligados à câmera por linhas (ex.: cantos do plano near)
+  cameraRayTargets?: Vector3[];
 }
 
 interface ActiveResize {
@@ -52,10 +64,66 @@ interface ActiveResize {
 }
 
 const MIN_DIMENSION = 0.5;
+// Face de projeção (plano near, +Z local, do lado da câmera). É o material
+// de índice 4 tanto na boxGeometry (+x, -x, +y, -y, +z, -z) quanto na
+// geometria em perspectiva (direita, esquerda, cima, baixo, near, far).
+const PROJECTION_FACE_INDEX = 4;
+const PROJECTION_FACE_COLOR = "#ef4444";
+const PARALLEL_CAMERA_GAP = 1.5;
+
+// Câmera estilizada que olha para -Z local (em direção ao volume)
+function CameraMarker({
+  position,
+  rayTargets,
+}: {
+  position: Vector3;
+  rayTargets: Vector3[];
+}) {
+  return (
+    <>
+      <group position={position}>
+        {/* Corpo atrás da lente */}
+        <mesh position={[0, 0, 0.45]}>
+          <boxGeometry args={[1, 0.7, 0.7]} />
+          <meshPhongMaterial color={PROJECTION_FACE_COLOR} />
+        </mesh>
+        {/* Lente apontando para o volume */}
+        <mesh position={[0, 0, -0.1]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.35, 0.25, 0.4, 16]} />
+          <meshPhongMaterial color="#7f1d1d" />
+        </mesh>
+      </group>
+      {rayTargets.map((target, index) => (
+        <Line
+          key={index}
+          points={[position, target]}
+          color={PROJECTION_FACE_COLOR}
+          lineWidth={1}
+          dashed
+          dashSize={0.4}
+          gapSize={0.3}
+        />
+      ))}
+    </>
+  );
+}
 const snapToHalf = (value: number) => Math.round(value * 2) / 2;
 
 function getAxisIndex(axis: ResizeAxis) {
   return axis === "x" ? 0 : axis === "y" ? 1 : 2;
+}
+
+// Desloca a posição inicial ao longo do eixo redimensionado para que o
+// centro do volume fique em nextCenter (medido ao longo de axisDirection)
+export function moveProjectionCubeCenter(
+  context: ProjectionCubeResizeContext,
+  nextCenter: number
+) {
+  const { axisDirection, fixedFace, movingFace, startPosition } = context;
+  const startCenter = (fixedFace + movingFace) / 2;
+  return startPosition
+    .clone()
+    .addScaledVector(axisDirection, nextCenter - startCenter);
 }
 
 function getParallelResize(
@@ -67,7 +135,6 @@ function getParallelResize(
     side,
     faceDelta,
     fixedFace,
-    startPosition,
     startSize,
     resizeProjectionCube,
   } = context;
@@ -81,12 +148,10 @@ function getParallelResize(
   );
   const nextSize = startSize.clone().setComponent(axisIndex, dimension);
   const nextMovingFace = fixedFace + side * dimension * scale;
-  const nextPosition = startPosition.clone();
-  nextPosition.setComponent(
-    axisIndex,
-    (fixedFace + nextMovingFace) / 2 - cube.translation.getComponent(axisIndex)
+  const nextPosition = moveProjectionCubeCenter(
+    context,
+    (fixedFace + nextMovingFace) / 2
   );
-  resizeProjectionCube("parallel", cube.id, nextSize, nextPosition);
   resizeProjectionCube("parallel", cube.id, nextSize, nextPosition);
 }
 
@@ -99,6 +164,8 @@ export default function ProjectionCube({
   sideHandlesDepth,
   positionOffset = new Vector3(),
   onResize,
+  cameraDepth,
+  cameraRayTargets = [],
 }: ProjectionCubeProps) {
   const resizeProjectionCube = useScene3DStore(
     state => state.resizeProjectionCube
@@ -108,6 +175,20 @@ export default function ProjectionCube({
     .clone()
     .add(cube.translation)
     .add(positionOffset);
+  const { x: rotationX, y: rotationY, z: rotationZ } =
+    cube.rotation ?? new Vector3();
+  const quaternion = useMemo(
+    () =>
+      getProjectionVolumeQuaternion(
+        new Vector3(rotationX, rotationY, rotationZ)
+      ),
+    [rotationX, rotationY, rotationZ]
+  );
+  const euler = useMemo(
+    () =>
+      getProjectionVolumeEuler(new Vector3(rotationX, rotationY, rotationZ)),
+    [rotationX, rotationY, rotationZ]
+  );
 
   const beginResize = (
     event: ThreeEvent<PointerEvent>,
@@ -119,14 +200,16 @@ export default function ProjectionCube({
     event.stopPropagation();
 
     const axisIndex = getAxisIndex(axis);
-    const axisDirection = new Vector3().setComponent(axisIndex, 1);
+    const axisDirection = new Vector3()
+      .setComponent(axisIndex, 1)
+      .applyQuaternion(quaternion);
     const scaledHalfSize =
       (cube.size.getComponent(axisIndex) *
         cube.scale.getComponent(axisIndex)) /
       2;
-    const fixedFace = position.getComponent(axisIndex) - side * scaledHalfSize;
-    const movingFace =
-      position.getComponent(axisIndex) + side * scaledHalfSize;
+    const center = position.dot(axisDirection);
+    const fixedFace = center - side * scaledHalfSize;
+    const movingFace = center + side * scaledHalfSize;
     const plane = new Plane().setFromNormalAndCoplanarPoint(
       event.camera.getWorldDirection(new Vector3()),
       handlePosition
@@ -184,6 +267,12 @@ export default function ProjectionCube({
     document.body.style.cursor = "default";
   };
 
+  const cameraPosition = new Vector3(
+    0,
+    0,
+    (cameraDepth ?? cube.size.z / 2 + PARALLEL_CAMERA_GAP) * cube.scale.z
+  );
+
   const handles = (["x", "y", "z"] as const).flatMap(axis => {
     const axisIndex = getAxisIndex(axis);
     const halfDimension =
@@ -192,16 +281,18 @@ export default function ProjectionCube({
       2;
 
     return ([-1, 1] as const).map(side => {
-      const handlePosition = position.clone();
-      handlePosition.setComponent(
+      // Posição no sistema local do volume (o grupo aplica a rotação)
+      const localPosition = new Vector3().setComponent(
         axisIndex,
-        position.getComponent(axisIndex) + side * halfDimension
+        side * halfDimension
       );
       if (axis !== "z" && sideHandlesDepth !== undefined) {
-        handlePosition.z = position.z + sideHandlesDepth * cube.scale.z;
+        localPosition.z = sideHandlesDepth * cube.scale.z;
       }
-
-      const localPosition = handlePosition.clone().sub(position);
+      const handlePosition = localPosition
+        .clone()
+        .applyQuaternion(quaternion)
+        .add(position);
       const color =
         axis === "x" ? "#ef4444" : axis === "y" ? "#22c55e" : "#3b82f6";
 
@@ -231,7 +322,7 @@ export default function ProjectionCube({
   });
 
   return (
-    <group position={position}>
+    <group position={position} rotation={euler}>
       <mesh
         userData={{ id: cube.id }}
         geometry={geometry}
@@ -242,7 +333,9 @@ export default function ProjectionCube({
         {Array.from({ length: 6 }, (_, index) => (
           <meshPhongMaterial
             key={index}
-            color={cube.color}
+            color={
+              index === PROJECTION_FACE_INDEX ? PROJECTION_FACE_COLOR : cube.color
+            }
             transparent
             opacity={0.22}
             side={DoubleSide}
@@ -252,6 +345,12 @@ export default function ProjectionCube({
         <Edges threshold={1} color={cube.color} />
       </mesh>
       {handles}
+      <CameraMarker
+        position={cameraPosition}
+        rayTargets={cameraRayTargets.map(target =>
+          target.clone().multiply(cube.scale)
+        )}
+      />
     </group>
   );
 }

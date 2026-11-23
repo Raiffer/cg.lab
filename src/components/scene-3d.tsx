@@ -13,6 +13,10 @@ import CustomPlane3D from "./custom-plane-3d";
 import ParallelCube from "./parallel-cube";
 import PerspectiveCube from "./perspective-cube";
 import { useRef, useState } from "react";
+import {
+  getProjectionVolumeEuler,
+  getProjectionVolumeQuaternion,
+} from "@/lib/projection-volume";
 import { useThree } from "@react-three/fiber";
 import {
   ProjectionMode,
@@ -79,7 +83,17 @@ export function Scene3D({
     : 16;
   const volumeCenter = projectionCube
     ? projectionCube.position.clone().add(projectionCube.translation)
-    : { x: 0, y: 0, z: 0 };
+    : new Vector3();
+  // A câmera da visualização gira junto com o volume, em torno do centro dele
+  const volumeEuler = getProjectionVolumeEuler(projectionCube?.rotation);
+  const volumeQuaternion = getProjectionVolumeQuaternion(
+    projectionCube?.rotation
+  );
+  const getVolumeCameraPosition = (distance: number) =>
+    new Vector3(0, 0, distance)
+      .applyQuaternion(volumeQuaternion)
+      .add(volumeCenter)
+      .toArray();
   const near = 0.1;
   const cameraOffset = near * 2;
   const far = volumeDepth + near * 3;
@@ -248,12 +262,8 @@ export function Scene3D({
           near={near}
           far={far}
           up={[0, 1, 0]}
-          rotation={[0, 0, 0]}
-          position={[
-            volumeCenter.x,
-            volumeCenter.y,
-            volumeCenter.z + volumeDepth / 2 + cameraOffset,
-          ]}
+          rotation={volumeEuler}
+          position={getVolumeCameraPosition(volumeDepth / 2 + cameraOffset)}
         />
       ) : perspectiveProjection ? (
         <PerspectiveCamera
@@ -264,12 +274,8 @@ export function Scene3D({
           near={perspectiveNear}
           far={perspectiveFar}
           up={[0, 1, 0]}
-          rotation={[0, 0, 0]}
-          position={[
-            volumeCenter.x,
-            volumeCenter.y,
-            volumeCenter.z + perspectiveCameraDistance,
-          ]}
+          rotation={volumeEuler}
+          position={getVolumeCameraPosition(perspectiveCameraDistance)}
         />
       ) : (
         <PerspectiveCamera
