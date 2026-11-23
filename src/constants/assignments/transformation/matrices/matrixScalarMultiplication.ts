@@ -102,11 +102,15 @@ function createSingleGapAssignment(
   const c = gapCol - 1;
   const matrixKA = scalarMultiply(matrixA, scalar);
   const targetValue = matrixKA[r][c];
+  const el = notation(gapRow, gapCol);
 
   return {
     ...baseAssignment(order),
     instructions: `Complete o elemento que falta em ${scalar} · A.`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: `Multiplique o valor de ${el} em A por ${scalar}. Cada célula de k·A é a célula correspondente de A vezes k.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -151,6 +155,9 @@ function createFullResultAssignment(
     ...baseAssignment(order),
     instructions: `Calcule ${scalar} · A e preencha todas as células.`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX,
+    feedback: {
+      incorrect: `Cada célula de ${scalar} · A é a célula correspondente de A multiplicada por ${scalar}. Revise célula por célula.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -212,6 +219,9 @@ function createSingleCellChoiceAssignment(
     ...baseAssignment(order),
     instructions: `Observe A. Qual é o valor do elemento ${el} de ${scalar} · A?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Multiplique o valor de ${el} em A por ${scalar}, não some nem deixe de trocar o sinal.`,
+    },
     setup() {
       useFillBlankMatrixInputStore
         .getState()
@@ -250,6 +260,9 @@ function createFindScalarAssignment(
     ...baseAssignment(order),
     instructions: `B foi obtida multiplicando todo elemento de A por um número k (B = k · A). Qual é o valor de k?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: "Escolha uma posição e divida o valor em B pelo valor correspondente em A: o resultado é k. Confira em mais de uma posição para ter certeza.",
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix("matrix-a", "A", matrixA),
@@ -302,6 +315,9 @@ function createComputedMultiCellAssignment(
     ...baseAssignment(order),
     instructions: `Calcule ${scalar} · A e preencha as posições ${notations}, na ordem em que aparecem (de cima para baixo, esquerda para direita).`,
     type: AssignmentType.FILL_IN_THE_BLANK_MATRIX_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Calcule cada posição (${notations}) multiplicando o valor de A por ${scalar}, e clique nas opções na ordem em que as lacunas aparecem na matriz.`,
+    },
     setup() {
       useFillBlankMatrixInputStore
         .getState()

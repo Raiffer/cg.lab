@@ -112,6 +112,18 @@ function makeOptions(correctValue: number, distractors: number[]): TOption[] {
   ]);
 }
 
+function incorrectFeedbackFor2x2(): string {
+  const { selectedOptions } = useFillInTheBlankWithOptionsStore.getState();
+  const answer = selectedOptions["resposta"];
+  if (answer?.id === "distractor-0") {
+    return "Esse valor é a·d + b·c: a fórmula tem uma subtração, não uma soma. det(A) = a·d − b·c.";
+  }
+  if (answer?.id === "distractor-1") {
+    return "Esse valor inverteu a ordem: é b·c − a·d, mas a fórmula é a·d − b·c (primeiro o produto da diagonal principal).";
+  }
+  return "Releia a matriz A e aplique a fórmula det(A) = a·d − b·c.";
+}
+
 function create2x2Assignment(order: number, title: string, m: Grid2): Assignment {
   const [[a, b], [c, d]] = m;
   const correct = det2(m);
@@ -128,6 +140,9 @@ function create2x2Assignment(order: number, title: string, m: Grid2): Assignment
         ? `Calcule o determinante de A. det(A) = a·d − b·c.`
         : `Calcule o determinante de A.`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: incorrectFeedbackFor2x2,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix(m),
@@ -144,6 +159,18 @@ function create2x2Assignment(order: number, title: string, m: Grid2): Assignment
 /** Degrau 1 do 3x3: matriz TRIANGULAR (zeros abaixo da diagonal), onde
  * det(A) = a·e·i — só multiplicar a diagonal, sem expansão de cofatores.
  * Introduz o tamanho 3x3 isoladamente. */
+function incorrectFeedbackFor3x3Triangular(): string {
+  const { selectedOptions } = useFillInTheBlankWithOptionsStore.getState();
+  const answer = selectedOptions["resposta"];
+  if (answer?.id === "distractor-0") {
+    return "Esse é a SOMA da diagonal (a+e+i), não o produto. Para uma matriz triangular, det(A) = a·e·i.";
+  }
+  if (answer?.id === "distractor-1") {
+    return "Esse valor usa a diagonal errada. A diagonal principal vai do canto superior esquerdo ao inferior direito: multiplique a, e, i.";
+  }
+  return "Para uma matriz triangular (zeros abaixo da diagonal principal), det(A) é só o produto dos elementos da diagonal principal.";
+}
+
 function create3x3TriangularAssignment(
   order: number,
   title: string,
@@ -161,6 +188,9 @@ function create3x3TriangularAssignment(
       "Quando uma matriz 3×3 é triangular (só há zeros abaixo da diagonal principal), " +
       "o determinante é simplesmente o produto da diagonal: det(A) = a·e·i.",
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: incorrectFeedbackFor3x3Triangular,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix(m),
@@ -197,6 +227,9 @@ function create3x3RecognizeZeroAssignment(
     ...baseAssignment(order, title),
     instructions: `Sem calcular nada: ${hint} Qual é det(A)?`,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
+    feedback: {
+      incorrect: `Releia a dica: ${hint.charAt(0).toLowerCase()}${hint.slice(1)} Essa estrutura, sozinha, já determina o valor de det(A), sem precisar somar ou multiplicar nada.`,
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         readonlyDisplayMatrix(m),

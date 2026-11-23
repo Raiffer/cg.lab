@@ -34,6 +34,21 @@ interface DeterminantScalarRowPropertyAssignmentProps {
   scaledRow: 1 | 2;
 }
 
+function incorrectFeedbackForScalarRow(scalar: number): string {
+  const { selectedOptions } = useFillInTheBlankWithOptionsStore.getState();
+  const answer = selectedOptions["resposta"];
+  if (answer?.id === "whole-matrix") {
+    return `k² só entra quando MULTIPLICAMOS A MATRIZ INTEIRA por k. Aqui só uma linha foi multiplicada por k = ${scalar}, então o determinante escala por k (não por k²).`;
+  }
+  if (answer?.id === "unchanged") {
+    return "Multiplicar uma linha por k muda sim o determinante: ele também é multiplicado por k.";
+  }
+  if (answer?.id === "added") {
+    return "O escalar MULTIPLICA o determinante, não soma. O novo determinante é k vezes o determinante original.";
+  }
+  return "Multiplicar uma única linha por k multiplica o determinante por k (não por k²: isso só aconteceria multiplicando a matriz inteira).";
+}
+
 function createDeterminantScalarRowPropertyAssignment({
   order,
   title,
@@ -60,6 +75,9 @@ function createDeterminantScalarRowPropertyAssignment({
     assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "determinants",
+    feedback: {
+      incorrect: () => incorrectFeedbackForScalarRow(scalar),
+    },
     setup() {
       useFillBlankMatrixInputStore.getState().setMatrices([
         {

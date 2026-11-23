@@ -59,6 +59,11 @@ function createMatrixSingularityPredictionAssignment({
     assisted: false,
     type: AssignmentType.FILL_IN_THE_BLANK_WITH_OPTIONS,
     subjectCategory: "determinants",
+    feedback: {
+      incorrect: hasInverse
+        ? "O paralelogramo tem área (não achatou numa linha nem sumiu num ponto): então A tem inversa."
+        : "Olhe de novo o paralelogramo: ele achatou numa linha (ou sumiu num ponto). Área zero significa que A NÃO tem inversa.",
+    },
     setup() {
       const { setVectors, setPolygons } = useScene2DStore.getState();
 

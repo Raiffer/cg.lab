@@ -1,7 +1,15 @@
 "use client";
 
 // External dependencies
-import React, { useLayoutEffect, use, useState } from "react";
+import { redirect } from "next/navigation";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  useMemo,
+  use,
+  useState,
+} from "react";
 import { ChevronDown } from "lucide-react";
 
 // Components
@@ -11,14 +19,30 @@ import ObjectivePanel2D from "@/components/objective-panel-2d";
 import ObjectivePanel3D from "@/components/objective-panel-3d";
 import AssignmentNotAnswered from "@/components/assignment-not-answered";
 import AssignmentResult from "@/components/assignment-result";
-import AssignmentInfoButton from "@/components/assignment-info-button";
 import SidePanel from "@/components/side-panel";
+import { Button } from "@/components/ui/button";
 
 // Hooks
-import { useSubjectAssignmentPage } from "@/hooks/use-subject-assignment-page";
+import { useAssignment } from "@/hooks/use-assignment";
+import { useAssignmentKeyboardShortcuts } from "@/hooks/use-assignment-keyboard-shortcut";
+import { useResetStores } from "@/hooks/use-reset-stores";
 
 // Store
 import { useScene2DStore } from "@/store/scene2DStore";
+
+// Constants
+import { subjects } from "@/constants/assignments";
+import { SubjectCategories } from "@/constants/defaultDailyMissions";
+
+// The info-button hover/pop-up feedback mechanic is scoped to the modules
+// Guilherme built and maintains (Fundamentos de Matrizes, Determinantes,
+// Sistemas Lineares 2D/3D, which all share the "linear-systems" category) —
+// every other module keeps the original inline incorrect-feedback text.
+const OWNED_SUBJECT_CATEGORIES: SubjectCategories[] = [
+  "matrix-fundamentals",
+  "determinants",
+  "linear-systems",
+];
 
 export default function SpecificAssignmentPage({
   params,
@@ -28,17 +52,48 @@ export default function SpecificAssignmentPage({
   // State initialization
   const { subject, id } = use(params);
   const { config } = useScene2DStore();
+  const [isInfoHovered, setIsInfoHovered] = useState(false);
   const [isAssignmentMinimized, setIsAssignmentMinimized] = useState(false);
   const {
     assignment,
-    subjectData,
+    setAssignment,
     assignmentState,
-    isLastAssignmentInSubject,
+    setAssignmentState,
     handleConfirm,
-    handleTryAgain,
-    handleNext,
-    handlePrevious,
-  } = useSubjectAssignmentPage(subject, id);
+    setStartTime,
+    incrementAttemptCount,
+    resetAttemptCount,
+    wrongAttemptCount,
+    lastIncorrectFeedback,
+    resetWrongAttempts,
+  } = useAssignment(subject);
+  const resetAll = useResetStores();
+
+  // Derived state
+  const subjectData = useMemo(
+    () => subjects.find(s => s.slug === subject),
+    [subject]
+  );
+  const isLastAssignmentInSubject = useMemo(() => {
+    if (!subjectData || !assignment) return false;
+    const currentIndex = subjectData.assignments.findIndex(
+      a => a.id === assignment.id
+    );
+    return currentIndex === subjectData.assignments.length - 1;
+  }, [assignment, subjectData]);
+
+  // Effects
+  useEffect(() => {
+    resetAll();
+    if (!subjectData) return;
+
+    const assi = subjectData.assignments.find(a => a.id === id);
+    if (assi) {
+      setStartTime(Date.now());
+      setAssignment(assi);
+      assi.setup();
+    }
+  }, [id, subjectData, resetAll, setAssignment, setStartTime]);
 
   useLayoutEffect(() => {
     document.body.style.overflow = "hidden";
@@ -47,6 +102,63 @@ export default function SpecificAssignmentPage({
     };
   }, []);
 
+  // Event handlers
+  const handleTryAgain = useCallback(() => {
+    resetAll();
+    setAssignmentState("notAnswered");
+    setStartTime(Date.now());
+    incrementAttemptCount();
+    assignment?.setup();
+  }, [
+    resetAll,
+    assignment,
+    setAssignmentState,
+    setStartTime,
+    incrementAttemptCount,
+  ]);
+
+  const handleNext = useCallback(() => {
+    if (!assignment || !subjectData) return;
+
+    const currentIndex = subjectData.assignments.findIndex(
+      a => a.id === assignment.id
+    );
+    const nextAssignment = subjectData.assignments[currentIndex + 1];
+
+    if (nextAssignment) {
+      resetAttemptCount();
+      resetWrongAttempts();
+      redirect(`/assignment/${subject}/${nextAssignment.id}`);
+    } else {
+      redirect(`/subject/${subject}`);
+    }
+  }, [assignment, subject, subjectData, resetAttemptCount, resetWrongAttempts]);
+
+  const handlePrevious = useCallback(() => {
+    if (!assignment || !subjectData) return;
+
+    const currentIndex = subjectData.assignments.findIndex(
+      a => a.id === assignment.id
+    );
+    const previousAssignment = subjectData.assignments[currentIndex - 1];
+
+    if (previousAssignment) {
+      resetAttemptCount();
+      resetWrongAttempts();
+      redirect(`/assignment/${subject}/${previousAssignment.id}`);
+    } else {
+      redirect(`/subject/${subject}`);
+    }
+  }, [assignment, subject, subjectData, resetAttemptCount, resetWrongAttempts]);
+
+  // Keyboard shortcuts
+  useAssignmentKeyboardShortcuts(
+    assignmentState,
+    handleConfirm,
+    handleTryAgain,
+    handleNext
+  );
+
   // Early return if no assignment loaded
   if (!assignment || !subjectData) return null;
 
@@ -54,9 +166,53 @@ export default function SpecificAssignmentPage({
   // hide the scene, paint the background white and center the question.
   const hideCanvas = assignment.hideCanvas ?? false;
 
+  const isOwnedModule = OWNED_SUBJECT_CATEGORIES.includes(
+    assignment.subjectCategory
+  );
+
+  // The incorrect-feedback hint only exists once the student has actually
+  // gotten this question wrong at least once, only for exercises that define
+  // one, and only in the modules that moved to this mechanic. It stays
+  // available while they retry (assignmentState goes back to
+  // "notAnswered"), and disappears once they finally get it right.
+  const hasIncorrectHint =
+    isOwnedModule &&
+    Boolean(lastIncorrectFeedback) &&
+    assignmentState !== "correct";
+  // After 2 wrong attempts the student is clearly stuck: the info button
+  // pops open on its own instead of waiting to be hovered.
+  const shouldAutoOpenInfo = wrongAttemptCount > 2;
+  const isInfoVisible = hasIncorrectHint && (isInfoHovered || shouldAutoOpenInfo);
+
   return (
     <>
-      <AssignmentInfoButton />
+      {hasIncorrectHint && (
+        <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+          {isInfoVisible && (
+            <div
+              role="status"
+              className="w-64 rounded-md border bg-white p-4 text-sm shadow-lg"
+            >
+              {lastIncorrectFeedback}
+            </div>
+          )}
+          <Button
+            variant="outline"
+            size="icon"
+            className={`rounded-full bg-white ${
+              shouldAutoOpenInfo ? "ring-2 ring-red-400 animate-pulse" : ""
+            }`}
+            aria-label="Ver dica sobre a resposta incorreta"
+            aria-expanded={isInfoVisible}
+            onMouseEnter={() => setIsInfoHovered(true)}
+            onMouseLeave={() => setIsInfoHovered(false)}
+            onFocus={() => setIsInfoHovered(true)}
+            onBlur={() => setIsInfoHovered(false)}
+          >
+            <span className="text-lg font-bold">i</span>
+          </Button>
+        </div>
+      )}
 
       {/* Render appropriate scene based on subject type, or a blank white
           background for exercises that don't use the cartesian plane */}
@@ -156,6 +312,7 @@ export default function SpecificAssignmentPage({
                 onTryAgain={handleTryAgain}
                 onNext={handleNext}
                 feedback={assignment.feedback}
+                hideIncorrectFeedbackInline={isOwnedModule}
               />
             )}
           </div>
