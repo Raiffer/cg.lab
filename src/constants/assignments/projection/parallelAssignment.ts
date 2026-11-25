@@ -112,7 +112,7 @@ function createParallelAssignment({
         color: "#38bdf8",
         translation: new Vector3(0, 0, 0),
         scale: new Vector3(1, 1, 1),
-        rotation: volumeRotation.clone(),
+        rotation: volumeRotation.clone(), //teste
       });
     },
     validate() {
